@@ -20,16 +20,23 @@ public class GameModeController {
         loadBoard(event, "BOT");
     }
 
-    private void loadBoard(ActionEvent event, String mode) throws Exception {
+    private void loadBoard(ActionEvent event, String mode) {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp20050/quax_board.fxml"));
-        Parent root = loader.load();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp20050/quax_board.fxml"));
+            Parent root = loader.load();
 
+            QuaxBoardController controller = loader.getController();
+            controller.setMode(mode);
 
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
 
-        stage.setScene(new Scene(root, 800, 600));
-        stage.setTitle("Quax - " + mode);
-        stage.show();
+        } catch (Exception e) {
+            e.printStackTrace(); // VERY IMPORTANT
+        }
     }
+
+
 }

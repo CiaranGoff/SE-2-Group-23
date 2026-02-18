@@ -4,9 +4,16 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="OctCell1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#getCellID" prefHeight="1400.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="OctCell1" fx:controller="org.example.QuaxBoardController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#getCellID" prefHeight="1400.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f4f4f1" height="1000.0" layoutX="64.0" layoutY="142.0" stroke="BLACK" strokeType="INSIDE" width="70.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f4f4f1" height="1000.0" layoutX="1054.0" layoutY="123.0" stroke="BLACK" strokeType="INSIDE" width="70.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#050b12" height="60.0" layoutX="64.0" layoutY="1088.0" stroke="BLACK" strokeType="INSIDE" width="1060.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#050b12" height="60.0" layoutX="64.0" layoutY="98.0" stroke="BLACK" strokeType="INSIDE" width="1060.0" />
       <Polygon fx:id="RhoCell122" fill="#eeae0b" layoutX="269.0" layoutY="118.0" onMouseClicked="#getCellID" scaleX="0.75" scaleY="0.75" scaleZ="0.75" stroke="BLACK" strokeType="INSIDE">
          <points>
             <Double fx:value="100.0" />
@@ -2813,6 +2820,195 @@
       </Polygon>
       <Polygon fx:id="RhoCell14111" fill="#eeae0b" layoutX="359.0" layoutY="838.0" onMouseClicked="#getCellID" points="100.0, 64.9, 135.1, 100.0, 100.0, 134.61924743652344, 64.9, 100.0" scaleX="0.75" scaleY="0.75" stroke="BLACK" strokeType="INSIDE" />
       <Polygon fx:id="RhoCell1211211" fill="#eeae0b" layoutX="359.0" layoutY="748.0" onMouseClicked="#getCellID" points="100.0, 64.9, 135.1, 100.0, 100.0, 135.1, 64.9, 100.0" scaleX="0.75" scaleY="0.75" stroke="BLACK" strokeType="INSIDE" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e49425" height="1050.0" layoutX="1124.0" layoutY="98.0" stroke="BLACK" strokeType="INSIDE" width="50.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e49425" height="1050.0" layoutX="14.0" layoutY="98.0" stroke="BLACK" strokeType="INSIDE" width="50.0" />
+      <Text layoutX="136.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="226.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="B">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="315.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="C">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="405.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="D">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="495.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="E">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="587.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="F">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="675.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="G">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="765.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="H">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="861.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="I">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="947.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="J">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="1035.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="K">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="1131.0" layoutY="180.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1131.0" layoutY="271.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1138.0" layoutY="361.0" strokeType="OUTSIDE" strokeWidth="0.0" text="9">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1137.0" layoutY="451.0" strokeType="OUTSIDE" strokeWidth="0.0" text="8">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1138.0" layoutY="541.0" strokeType="OUTSIDE" strokeWidth="0.0" text="7">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1138.0" layoutY="631.0" strokeType="OUTSIDE" strokeWidth="0.0" text="6">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1137.0" layoutY="721.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1137.0" layoutY="811.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1137.0" layoutY="901.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1137.0" layoutY="991.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1137.0" layoutY="1081.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="28.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="28.0" layoutY="271.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="34.0" layoutY="360.0" strokeType="OUTSIDE" strokeWidth="0.0" text="9">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="34.0" layoutY="450.0" strokeType="OUTSIDE" strokeWidth="0.0" text="8">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="34.0" layoutY="541.0" strokeType="OUTSIDE" strokeWidth="0.0" text="7">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="34.0" layoutY="631.0" strokeType="OUTSIDE" strokeWidth="0.0" text="6">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="32.0" layoutY="720.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="32.0" layoutY="811.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="34.0" layoutY="900.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="34.0" layoutY="991.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="34.0" layoutY="1081.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="1035.0" layoutY="1180.0" strokeType="OUTSIDE" strokeWidth="0.0" text="K">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="947.0" layoutY="1182.0" strokeType="OUTSIDE" strokeWidth="0.0" text="J">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="861.0" layoutY="1180.0" strokeType="OUTSIDE" strokeWidth="0.0" text="I">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="765.0" layoutY="1179.0" strokeType="OUTSIDE" strokeWidth="0.0" text="H">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="675.0" layoutY="1181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="G">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="587.0" layoutY="1181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="F">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="495.0" layoutY="1180.0" strokeType="OUTSIDE" strokeWidth="0.0" text="E">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="405.0" layoutY="1181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="D">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="315.0" layoutY="1182.0" strokeType="OUTSIDE" strokeWidth="0.0" text="C">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="225.0" layoutY="1183.0" strokeType="OUTSIDE" strokeWidth="0.0" text="B">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
+      <Text layoutX="136.0" layoutY="1183.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font></Text>
    </children>
    <opaqueInsets>
       <Insets />
