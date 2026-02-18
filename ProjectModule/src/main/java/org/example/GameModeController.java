@@ -22,8 +22,9 @@ public class GameModeController {
 
     private void loadBoard(ActionEvent event, String mode) throws Exception {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/QuaxBoard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/comp20050/quax_board.fxml"));
         Parent root = loader.load();
+
 
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
