@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class GameModeController {
@@ -30,13 +31,20 @@ public class GameModeController {
             controller.setMode(mode);
 
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
+
+            // Get screen size
+            double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+            double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+
+            // Option 1: Fit to screen while keeping aspect ratio
+            Scene scene = new Scene(root, screenWidth * 0.9, screenHeight * 0.9); // 90% of screen
+
+            stage.setScene(scene);
             stage.show();
 
         } catch (Exception e) {
-            e.printStackTrace(); // VERY IMPORTANT
+            e.printStackTrace();
         }
     }
-
-
 }
+
