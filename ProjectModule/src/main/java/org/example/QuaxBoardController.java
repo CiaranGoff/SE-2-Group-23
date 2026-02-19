@@ -12,6 +12,10 @@ public class QuaxBoardController {
         System.out.println("Game Mode: " + mode);
     }
 
+    public String getMode(){
+        return mode;
+    }
+
     @FXML
     public void initialize(){
         // runs when board loads
