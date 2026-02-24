@@ -31,19 +31,14 @@ public class GameModeController {
             controller.setMode(mode);
 
             Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-
-            // Get screen size
-            double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
-            double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-
-            // Option 1: Fit to screen while keeping aspect ratio
-            Scene scene = new Scene(root, screenWidth * 0.9, screenHeight * 0.9); // 90% of screen
+            Scene scene = new Scene(root);
 
             stage.setScene(scene);
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Error in loading board to screen");
         }
     }
 }
