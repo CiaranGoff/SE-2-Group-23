@@ -3,6 +3,7 @@ import javafx.scene.paint.Color;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
+import javafx.scene.control.Label;
 
 import java.awt.*;
 
@@ -27,6 +28,14 @@ public class QuaxBoardController {
     }
 
     private boolean blackTurn = true;
+    @FXML
+    private Shape turnOctagon;
+
+    @FXML
+    private Shape turnRhombus;
+
+    @FXML
+    private Label turnLabel;
 
     @FXML
     private void getCellID(MouseEvent event){
@@ -44,6 +53,19 @@ public class QuaxBoardController {
         }
 
         blackTurn = !blackTurn;
+        updateTurn();
+    }
+
+    private void updateTurn(){
+        if(blackTurn){
+            turnLabel.setText("Black's Turn");
+            turnOctagon.setFill(Color.BLACK);
+            turnRhombus.setFill(Color.BLACK);
+        }else{
+            turnLabel.setText("White's Turn");
+            turnOctagon.setFill(Color.WHITE);
+            turnRhombus.setFill(Color.WHITE);
+        }
     }
 }
 
