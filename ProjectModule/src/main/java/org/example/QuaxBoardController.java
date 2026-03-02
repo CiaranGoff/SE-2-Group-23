@@ -5,10 +5,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 import javafx.scene.control.Label;
 
-import java.awt.*;
-
-import static java.awt.Color.BLACK;
-
 public class QuaxBoardController {
 
     private String mode;
@@ -28,6 +24,8 @@ public class QuaxBoardController {
     }
 
     private boolean blackTurn = true;
+    private Shape blackFirstMove = null;
+    private boolean pieRuleAvailable = true;
     @FXML
     private Shape turnOctagon;
 
@@ -38,17 +36,35 @@ public class QuaxBoardController {
     private Label turnLabel;
 
     @FXML
+    private Label pieRuleLabel;
+
+
+    @FXML
     private void getCellID(MouseEvent event){
         Shape cell = (Shape) event.getSource();
 
-        if(cell.getFill().equals(Color.BLACK) ||
-        cell.getFill().equals(Color.WHITE)){
+        if((cell.getFill().equals(Color.BLACK) || cell.getFill().equals(Color.WHITE)) && !pieRuleAvailable){
             return;
         }
 
         if(blackTurn){
             cell.setFill(Color.BLACK);
-        }else{
+
+            if (blackFirstMove == null) {
+                blackFirstMove = cell;
+            }
+        }
+        else{
+            if (pieRuleAvailable) {
+                if (cell == blackFirstMove) {
+                    blackFirstMove.setFill(Color.WHITE);
+                    pieRuleAvailable = false;
+                    blackTurn = true;
+                    updateTurn();
+                    return;
+                }
+                pieRuleAvailable = false;
+            }
             cell.setFill(Color.WHITE);
         }
 
@@ -57,14 +73,22 @@ public class QuaxBoardController {
     }
 
     private void updateTurn(){
-        if(blackTurn){
+        if (blackTurn){
             turnLabel.setText("Black's Turn");
             turnOctagon.setFill(Color.BLACK);
             turnRhombus.setFill(Color.BLACK);
-        }else{
+        }
+        else{
             turnLabel.setText("White's Turn");
             turnOctagon.setFill(Color.WHITE);
             turnRhombus.setFill(Color.WHITE);
+        }
+
+        if (!blackTurn && pieRuleAvailable) {
+            pieRuleLabel.setVisible(true);
+        }
+        else {
+            pieRuleLabel.setVisible(false);
         }
     }
 }
