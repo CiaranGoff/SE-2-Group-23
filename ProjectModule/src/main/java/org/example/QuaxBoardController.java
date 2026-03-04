@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import java.util.Optional;
 
 public class QuaxBoardController {
 
@@ -35,8 +38,30 @@ public class QuaxBoardController {
     @FXML
     private Label turnLabel;
 
-    @FXML
-    private Label pieRuleLabel;
+    private void showPieRuleDialog() {
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Pie Rule");
+        alert.setHeaderText("PIE Rule");
+        alert.setContentText("Do you want to swap with Black's first move?");
+
+        ButtonType swapButton = new ButtonType("Swap");
+        ButtonType continueButton = new ButtonType("Continue Normally");
+
+        alert.getButtonTypes().setAll(swapButton, continueButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == swapButton) {
+            blackFirstMove.setFill(Color.WHITE);
+            pieRuleAvailable = false;
+            blackTurn = false;
+            updateTurn();
+        }
+        else {
+            pieRuleAvailable = false;
+        }
+    }
 
 
     @FXML
@@ -47,27 +72,22 @@ public class QuaxBoardController {
             return;
         }
 
-        if(blackTurn){
+        if(blackTurn) {
             cell.setFill(Color.BLACK);
 
             if (blackFirstMove == null) {
                 blackFirstMove = cell;
             }
         }
-        else{
-            if (pieRuleAvailable) {
-                if (cell == blackFirstMove) {
-                    blackFirstMove.setFill(Color.WHITE);
-                    pieRuleAvailable = false;
-                    blackTurn = true;
-                    updateTurn();
-                    return;
-                }
-                pieRuleAvailable = false;
-            }
+        else {
             cell.setFill(Color.WHITE);
         }
 
+
+
+        if (pieRuleAvailable) {
+            showPieRuleDialog();
+        }
         blackTurn = !blackTurn;
         updateTurn();
     }
@@ -82,13 +102,6 @@ public class QuaxBoardController {
             turnLabel.setText("White's Turn");
             turnOctagon.setFill(Color.WHITE);
             turnRhombus.setFill(Color.WHITE);
-        }
-
-        if (!blackTurn && pieRuleAvailable) {
-            pieRuleLabel.setVisible(true);
-        }
-        else {
-            pieRuleLabel.setVisible(false);
         }
     }
 }
