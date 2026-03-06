@@ -82,9 +82,6 @@ public class QuaxBoardController {
         else {
             cell.setFill(Color.WHITE);
         }
-
-
-
         if (pieRuleAvailable) {
             showPieRuleDialog();
         }
