@@ -1,0 +1,9 @@
+.hover-target {
+    -fx-background-color:  #6b6161;
+}
+
+.hover-target:hover {
+    -fx-background-color: #757272;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
