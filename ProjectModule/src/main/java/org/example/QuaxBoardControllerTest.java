@@ -86,4 +86,24 @@ public class QuaxBoardControllerTest {
         Object value = field.get(controller);
         Assert.assertNull(value);
     }
+
+    @Test
+    public void checkChainTest(){
+
+    }
+
+    @Test
+    public void checkWinTest(){
+
+    }
+
+    @Test
+    public void updateTurnTest(){
+
+    }
+
+    @Test
+    public void initialiseShapesTest(){
+
+    }
 }
