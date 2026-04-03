@@ -11,12 +11,12 @@
    <children>
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1000.0" prefWidth="1500.0" style="-fx-background-color: A6462B;" VBox.vgrow="ALWAYS">
          <children>
-            <Button fx:id="humanButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="834.0" layoutY="639.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHuman" prefHeight="76.0" prefWidth="551.0" style="-fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs HUMAN" textFill="#54ff57">
+            <Button fx:id="humanButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="834.0" layoutY="639.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHuman" prefHeight="76.0" prefWidth="525.0" style="-fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs HUMAN" textFill="#54ff57">
                <font>
                   <Font name="Baloo Chettan 2 Regular" size="30.0" />
                </font>
             </Button>
-            <Button fx:id="botMode" alignment="BASELINE_LEFT" layoutX="834.0" layoutY="749.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBot" prefHeight="76.0" prefWidth="551.0" style="-fx-background-color: #6b6161; -fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs BOT" textFill="#fc5353">
+            <Button fx:id="botMode" alignment="BASELINE_LEFT" layoutX="834.0" layoutY="749.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBot" prefHeight="76.0" prefWidth="525.0" style="-fx-background-color: #6b6161; -fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs BOT" textFill="#fc5353">
                <font>
                   <Font name="Baloo Chettan 2 Regular" size="30.0" />
                </font>
