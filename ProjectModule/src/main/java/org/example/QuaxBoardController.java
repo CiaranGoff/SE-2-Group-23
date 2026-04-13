@@ -100,7 +100,7 @@ public class QuaxBoardController {
     }
 
 
-    private Tile findTileById(String id) {
+     protected Tile findTileById(String id) {
         //search octagons
         for (int row = 0; row < 11; row++) {
             for (int col = 0; col < 11; col++) {
@@ -149,7 +149,6 @@ public class QuaxBoardController {
 
         pieRuleAvailable = false;
         updateTurn();
-
 
     }
 
@@ -209,7 +208,7 @@ public class QuaxBoardController {
         }
     }
 
-    private boolean checkWin(Tile.TileColor color) {
+    protected boolean checkWin(Tile.TileColor color) {
         boolean hasStart = false;
         boolean hasEnd = false;
 
@@ -246,7 +245,7 @@ public class QuaxBoardController {
         return false;
     }
 
-    private boolean checkChain(Tile tile, Tile.TileColor color, boolean[][] visitedOct, boolean[][] visitedRho) {
+    protected boolean checkChain(Tile tile, Tile.TileColor color, boolean[][] visitedOct, boolean[][] visitedRho) {
         if (tile == null || tile.getColor() != color) return false;
 
         int row = tile.getTileRow() - 1;
@@ -268,7 +267,7 @@ public class QuaxBoardController {
         return false;
     }
 
-    private void resetGame() {
+    protected void resetGame() {
         //rest variables//
         blackTurn = true;
         blackFirstMove = null;

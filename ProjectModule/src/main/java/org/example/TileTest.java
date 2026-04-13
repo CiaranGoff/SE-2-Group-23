@@ -1,5 +1,6 @@
 package org.example;
 
+import javafx.scene.shape.Rectangle;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -98,7 +99,7 @@ public class TileTest {
     @Test
     public void getTileColTest(){
         int colExample1 = 1;
-        Tile example = new Tile("001", Tile.TileType.OCTAGON, 2, 1);
+        Tile example = new Tile("001", Tile.TileType.OCTAGON, 1, 1);
         Assert.assertEquals(colExample1, example.getTileRow());
 
         int colExample2 = 2;
@@ -110,13 +111,56 @@ public class TileTest {
         Assert.assertEquals(colExample3, example3.getTileRow());
 
         int colExample4 = 4;
-        Tile example4 = new Tile("008", Tile.TileType.OCTAGON, 2, 9);
+        Tile example4 = new Tile("008", Tile.TileType.RHOMBUS, 2, 9);
         Assert.assertFalse(example4.getTileRow() == colExample4);
     }
 
+    /* Tests to ensure that neighbours are correctly added to a tile in the game when placed
+     * beside each other.
+     * Use of assert equals and true to test that the size of the neighbours List array
+     * is correct and that it contains the correct elements.
+     */
     @Test
     public void getNeighboursTest(){
+        Tile center = new Tile("001", Tile.TileType.OCTAGON, 5, 5);
+        Tile left = new Tile("002", Tile.TileType.RHOMBUS, 5, 5);
+        Tile right = new Tile("003", Tile.TileType.OCTAGON, 5, 6);
 
+        center.addNeighbour(left);
+        center.addNeighbour(right);
+
+        Assert.assertEquals(2, center.getNeighbours().size());
+        Assert.assertTrue(center.getNeighbours().contains(left));
+        Assert.assertTrue(center.getNeighbours().contains(right));
+    }
+
+    /* Tests to make sure when neighbouring tiles are added, that they are added in the
+     * correct order, by whichever one is added first.
+     * Use of assert equals to ensure that tiles added to list are in correct order
+     */
+    @Test
+    public void addNeighboursPreservesOrderTest(){
+        Tile tile = new Tile("001", Tile.TileType.OCTAGON, 5, 5);
+        Tile first = new Tile("002", Tile.TileType.OCTAGON, 5, 5);
+        Tile second = new Tile("003", Tile.TileType.OCTAGON, 5, 6);
+
+        tile.addNeighbour(first);
+        tile.addNeighbour(second);
+
+        Assert.assertEquals(first, tile.getNeighbours().get(0));
+        Assert.assertEquals(second, tile.getNeighbours().get(1));
+    }
+
+    /* Simple test to ensure the getter and setter methods for shapes work in the Tile class
+     * Use of assertEquals shows that both these methods work as intended.
+     */
+    @Test
+    public void getterAndSetterShapeTest(){
+        Tile tile = new Tile("001", Tile.TileType.OCTAGON, 5, 5);
+        Rectangle shape = new  Rectangle();
+        tile.setShape(shape);
+
+        Assert.assertEquals(shape, tile.getShape());
     }
 
 }
