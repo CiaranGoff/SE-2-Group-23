@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 
 public class GameModeController {
 
+
     @FXML
     private void handleHuman(ActionEvent event) throws Exception {
         loadBoard(event, "HUMAN");

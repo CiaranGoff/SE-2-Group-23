@@ -6,6 +6,8 @@ import javafx.scene.shape.Shape;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class QuaxBoardController {
@@ -179,28 +181,19 @@ public class QuaxBoardController {
         }
 
         if (checkWin(currentColor)) {
-            Alert winner = new Alert(Alert.AlertType.INFORMATION);
-            winner.setTitle("Game Over");
-            winner.setHeaderText("Congratulations!");
-            winner.setContentText((blackTurn ? "Black" : "White") + " wins");
-
-            ButtonType playAgain = new ButtonType("Play Again");
-            ButtonType exitGame = new ButtonType("Exit Game");
-            winner.getButtonTypes().setAll(playAgain, exitGame);
-            Optional<ButtonType> result = winner.showAndWait();
-            if (result.isPresent() && result.get() == playAgain) {
-                resetGame();
-            }else{
-                javafx.application.Platform.exit();
-            }
+            showWinnerAlert(blackTurn ? "Black" : "White");
             return;
         }
 
-        if (pieRuleAvailable && blackTurn) {
+        if (pieRuleAvailable && blackTurn && !this.mode.equals("BOT")) {
             showPieRuleDialog();
         } else {
             blackTurn = !blackTurn;
             updateTurn();
+        }
+
+        if(this.mode.equals("BOT") && !blackTurn) {
+            botMove();
         }
     }
 
@@ -304,6 +297,73 @@ public class QuaxBoardController {
         }
 
         updateTurn();
+    }
+
+    private void showWinnerAlert(String message){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText("Game Over");
+        alert.setContentText(message + "has won. Do you want to restart or exit");
+
+        ButtonType restart = new ButtonType("Restart");
+        ButtonType exit = new ButtonType("Exit");
+        alert.getButtonTypes().setAll(restart, exit);
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.isPresent() && result.get() == exit){
+            javafx.application.Platform.exit();
+        }else{
+            resetGame();
+        }
+    }
+
+    //BEGINNING OF BOT METHODS//
+    private void botMove(){
+        Tile move = calculateBotMove();
+        if(move != null){
+            applyMove(move);
+        }
+    }
+
+    private void applyMove(Tile tile){
+        tile.setColor(Tile.TileColor.WHITE);
+        Shape shape = (Shape) turnOctagon.getScene().lookup("#" + tile.getId());
+        if (shape != null) {
+            shape.setFill(Color.WHITE);
+        }
+
+        if(checkWin(Tile.TileColor.WHITE)){
+            showWinnerAlert("White , Bot");
+        }else{
+            blackTurn = true;
+            updateTurn();
+        }
+    }
+
+    private Tile calculateBotMove(){
+        java.util.List<Tile> emptyTiles = new ArrayList<>();
+
+        for(int row = 0; row < 11; row++){
+            for(int col = 0; col < 11; col++){
+                if(octagons[row][col].getColor() == Tile.TileColor.EMPTY){
+                    emptyTiles.add(octagons[row][col]);
+                }
+            }
+        }
+
+        for(int row = 0; row < 10; row++){
+            for(int col = 0; col < 10; col++){
+                if(rhombuses[row][col].getColor() == Tile.TileColor.EMPTY){
+                    emptyTiles.add(rhombuses[row][col]);
+                }
+            }
+
+        }
+        if(!emptyTiles.isEmpty()){
+            java.util.Random rand = new java.util.Random();
+            return emptyTiles.get(rand.nextInt(emptyTiles.size()));
+        }
+        return null;
+
     }
 }
 
