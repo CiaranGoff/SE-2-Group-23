@@ -100,7 +100,7 @@ public class QuaxBoardController {
     }
 
 
-     protected Tile findTileById(String id) {
+    protected Tile findTileById(String id) {
         //search octagons
         for (int row = 0; row < 11; row++) {
             for (int col = 0; col < 11; col++) {
@@ -191,7 +191,7 @@ public class QuaxBoardController {
             updateTurn();
         }
 
-        if(this.mode.equals("BOT") && !blackTurn) {
+        if (this.mode.equals("BOT") && !blackTurn) {
             botMove();
         }
     }
@@ -298,7 +298,7 @@ public class QuaxBoardController {
         updateTurn();
     }
 
-    private void showWinnerAlert(String message){
+    private void showWinnerAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText("Game Over");
@@ -308,63 +308,101 @@ public class QuaxBoardController {
         ButtonType exit = new ButtonType("Exit");
         alert.getButtonTypes().setAll(restart, exit);
         Optional<ButtonType> result = alert.showAndWait();
-        if(result.isPresent() && result.get() == exit){
+        if (result.isPresent() && result.get() == exit) {
             javafx.application.Platform.exit();
-        }else{
+        } else {
             resetGame();
         }
     }
 
     //BEGINNING OF BOT METHODS//
-    private void botMove(){
-        Tile move = calculateBotMove();
-        if(move != null){
-            applyMove(move);
+    private void botMove() {
+        Tile[] path = calculateBestPath(Tile.TileColor.WHITE);
+        if(path != null){
+            for(Tile t : path){
+                if(t.getColor() == Tile.TileColor.EMPTY){
+                    applyMove(t);
+                    return;
+                }
+            }
         }
     }
 
-    private void applyMove(Tile tile){
+    private void applyMove(Tile tile) {
         tile.setColor(Tile.TileColor.WHITE);
         Shape shape = (Shape) turnOctagon.getScene().lookup("#" + tile.getId());
         if (shape != null) {
             shape.setFill(Color.WHITE);
         }
 
-        if(checkWin(Tile.TileColor.WHITE)){
+        if (checkWin(Tile.TileColor.WHITE)) {
             showWinnerAlert("White , Bot");
-        }else{
+        } else {
             blackTurn = true;
             updateTurn();
         }
     }
 
-    private Tile calculateBotMove(){
-        java.util.List<Tile> emptyTiles = new ArrayList<>();
+    //calculating best path using dijkstras algorithm//
+    protected Tile[] calculateBestPath(Tile.TileColor color){
+        //can be used to calculate HUMAN moves in order to block their path//
+        Tile.TileColor opp = (color == Tile.TileColor.WHITE) ? Tile.TileColor.BLACK : Tile.TileColor.WHITE;
+        //used to store the next best available tile//
+        java.util.PriorityQueue<PathNode> pq = new java.util.PriorityQueue<>();
+        //used to ensure we have a track of the best path//
+        java.util.Map<Tile, Tile> parents = new java.util.HashMap<>();
+        //contains the distance and the correspond tile//
+        java.util.Map<Tile, Integer> dist = new java.util.HashMap<>();
 
         for(int row = 0; row < 11; row++){
-            for(int col = 0; col < 11; col++){
-                if(octagons[row][col].getColor() == Tile.TileColor.EMPTY){
-                    emptyTiles.add(octagons[row][col]);
-                }
+            Tile start = octagons[row][0];
+            if(start.getColor() != Tile.TileColor.BLACK){
+                int firstCost = (start.getColor() == color) ? 0 : 1;
+                dist.put(start, firstCost);
+                pq.add(new PathNode(start, firstCost));
             }
         }
 
-        for(int row = 0; row < 10; row++){
-            for(int col = 0; col < 10; col++){
-                if(rhombuses[row][col].getColor() == Tile.TileColor.EMPTY){
-                    emptyTiles.add(rhombuses[row][col]);
-                }
+        while(!pq.isEmpty()){
+            PathNode curr = pq.poll();
+            Tile tile = curr.tile;
+
+            if(tile.getTileCol() == 11 && tile.getType() == Tile.TileType.OCTAGON){
+                return reconstructPath(tile, parents);
             }
 
-        }
-        if(!emptyTiles.isEmpty()){
-            java.util.Random rand = new java.util.Random();
-            return emptyTiles.get(rand.nextInt(emptyTiles.size()));
+            for(Tile t : tile.getNeighbours()){
+                if(t.getColor() == opp){
+                    continue;
+                }
+                int weight = (t.getColor() == color) ? 0 : 1;
+                int distance = dist.getOrDefault(tile, 999) + weight;
+
+                if(distance < dist.getOrDefault(t, 999)){
+                    dist.put(t, distance);
+                    parents.put(t, tile);
+                    pq.add(new PathNode(t, distance));
+                }
+            }
         }
         return null;
+    }
 
+    protected Tile[] reconstructPath(Tile endTile, java.util.Map<Tile, Tile> parents){
+        java.util.List<Tile> path = new java.util.LinkedList<>();
+        Tile curr = endTile;
+
+        while(curr != null){
+            path.add(0, curr);
+            curr = parents.get(curr);
+        }
+        return path.toArray(new Tile[0]);
     }
 }
+
+
+
+
 
 
 
