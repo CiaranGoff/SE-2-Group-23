@@ -1,4 +1,5 @@
 package org.example;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.paint.Color;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
@@ -7,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class QuaxBoardController {
@@ -19,6 +19,7 @@ public class QuaxBoardController {
     //2d arrays used to represent the tiles on the quax board//
     private Tile[][] octagons = new Tile[11][11];
     private Tile[][] rhombuses = new Tile[10][10];
+    private boolean showStrategy = false;
     @FXML
     private Shape turnOctagon;
 
@@ -155,6 +156,13 @@ public class QuaxBoardController {
 
     @FXML
     private void getCellID(MouseEvent event) {
+
+        clearHighlights();
+
+        if (showStrategy) {
+            highlightPath();
+        }
+
         if (!(event.getSource() instanceof Shape)) {
             return;
         }
@@ -192,6 +200,7 @@ public class QuaxBoardController {
         }
 
         if (this.mode.equals("BOT") && !blackTurn) {
+            highlightPath();
             botMove();
         }
     }
@@ -316,16 +325,17 @@ public class QuaxBoardController {
     }
 
     //BEGINNING OF BOT METHODS//
-    private void botMove() {
+    private Tile botMove() {
         Tile[] path = calculateBestPath(Tile.TileColor.WHITE);
-        if(path != null){
-            for(Tile t : path){
-                if(t.getColor() == Tile.TileColor.EMPTY){
+        if (path != null) {
+            for (Tile t : path) {
+                if (t.getColor() == Tile.TileColor.EMPTY) {
                     applyMove(t);
-                    return;
+                    return t;
                 }
             }
         }
+        return null;
     }
 
     private void applyMove(Tile tile) {
@@ -397,6 +407,72 @@ public class QuaxBoardController {
             curr = parents.get(curr);
         }
         return path.toArray(new Tile[0]);
+    }
+
+    @FXML
+    private ToggleButton strategyToggle;
+
+    @FXML
+    private void handleShowStrategyToggle() {
+        showStrategy = strategyToggle.isSelected();
+
+        if (!showStrategy) {
+            clearHighlights();
+            strategyToggle.setText("Show Strategy");
+        } else {
+            strategyToggle.setText("Hide Strategy");
+            highlightPath();
+        }
+    }
+
+    private void highlightPath() {
+        if (!showStrategy) {return;}
+        if (!"BOT".equalsIgnoreCase(mode)) {return;}
+
+        clearHighlights();
+
+        Tile[] nextMove = calculateBestPath(Tile.TileColor.WHITE);
+
+        if (nextMove != null) {
+            for (Tile tile : nextMove) {
+                Shape shape = (Shape) turnOctagon.getScene().lookup("#" + tile.getId());
+
+                if (shape != null && !(shape.getFill() == Color.WHITE) && !(shape.getFill() == Color.BLACK)) {
+                    shape.setFill(Color.LIGHTBLUE);
+                }
+            }
+        }
+    }
+
+    private void clearHighlights() {
+
+        // reset octagons
+        for (int r = 0; r < 11; r++) {
+            for (int c = 0; c < 11; c++) {
+                Tile t = octagons[r][c];
+
+                if (t.getColor() == Tile.TileColor.EMPTY) {
+                    Shape s = (Shape) turnOctagon.getScene().lookup("#" + t.getId());
+                    if (s != null) {
+                        s.setFill(Color.web("#e9c218"));
+                    }
+                }
+            }
+        }
+
+        // reset rhombuses
+        for (int r = 0; r < 10; r++) {
+            for (int c = 0; c < 10; c++) {
+                Tile t = rhombuses[r][c];
+
+                if (t.getColor() == Tile.TileColor.EMPTY) {
+                    Shape s = (Shape) turnOctagon.getScene().lookup("#" + t.getId());
+                    if (s != null) {
+                        s.setFill(Color.web("#eeae0b"));
+                    }
+                }
+            }
+        }
     }
 }
 
