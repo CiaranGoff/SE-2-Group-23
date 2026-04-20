@@ -160,7 +160,7 @@ public class QuaxBoardController {
         }
         Shape cell = (Shape) event.getSource();
 
-        if ((cell.getFill().equals(Color.BLACK) || cell.getFill().equals(Color.WHITE)) && !pieRuleAvailable) {
+        if ((cell.getFill().equals(Color.BLACK) || cell.getFill().equals(Color.WHITE)) && (!pieRuleAvailable || this.mode.equals("BOT"))) {
             return;
         }
 
@@ -376,7 +376,7 @@ public class QuaxBoardController {
                     continue;
                 }
                 int weight = (t.getColor() == color) ? 0 : 1;
-                int distance = dist.getOrDefault(tile, 999) + weight;
+                int distance = dist.get(tile) + weight;
 
                 if(distance < dist.getOrDefault(t, 999)){
                     dist.put(t, distance);
