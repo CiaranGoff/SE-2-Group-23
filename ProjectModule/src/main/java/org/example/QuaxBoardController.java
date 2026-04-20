@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class QuaxBoardController {
