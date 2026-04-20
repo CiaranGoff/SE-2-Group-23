@@ -3083,13 +3083,6 @@
                   <Font name="Baloo Chettan 2 Regular" size="36.0" />
                </font>
             </ToggleButton>
-                <!--
-            <Button layoutX="1304.0" layoutY="135.0" mnemonicParsing="false" prefHeight="63.0" prefWidth="294.0" text="Show Strategy" onAction="#handleShowStrategyToggle">
-               <font>
-                  <Font name="Baloo Chettan 2 Regular" size="38.0" />
-               </font>
-            </Button>
-            -->
             </children>
             <opaqueInsets>
                 <Insets />

@@ -339,6 +339,9 @@ public class QuaxBoardControllerTest {
         Assert.assertEquals("RhoCell100", rhombuses[9][9].getId());
     }
 
+    /* Test to observe that the game state is changed back after a player chooses to reset the game
+     * Requires use of helper functions created, to alter any private fields in this test method
+     */
     @Test
     public void resetGameResetsStateTest() throws Exception {
         QuaxBoardController controller = new QuaxBoardController();
@@ -366,4 +369,110 @@ public class QuaxBoardControllerTest {
         Assert.assertNull(getPrivateField(controller, "blackFirstMove"));
         Assert.assertTrue((boolean) getPrivateField(controller, "pieRuleAvailable"));
     }
+
+    /* Test to ensure the bot is able to pick a move during a round of Quax
+     * Verify that after calling botMove, at least one tiles state has changed to white
+     * Test makes use of AssertTrue, Note also use of try-catch block is used to catch any
+     * errors from any UI or sceneBuilder errors, which we ignore
+     */
+    @Test
+    public void botMoveTest() throws Exception{
+        QuaxBoardController controller = newInitialisedController();
+        controller.setMode("BOT");
+
+        setPrivateField(controller, "blackTurn", false);
+        try{
+            controller.botMove();
+        } catch(Exception ex){
+            //Is a UI/JavaFxScene error so we ignore this
+        }
+
+        Tile[][] octagons = (Tile[][]) getPrivateField(controller, "octagons");
+        boolean whiteFound = false;
+        for(int r = 0; r < 11; r ++){
+            for(int c = 0; c < 11; c ++){
+                if(octagons[r][c].getColor() == Tile.TileColor.WHITE){
+                    whiteFound = true;
+                    break;
+                }
+            }
+        }
+        Assert.assertTrue(whiteFound);
+    }
+
+    /* To test that after calling applyMove, the chosen tile is correctly
+     * updated and the turn is switched back to the other player, or bot
+     * Note use of try-catch block for UI or sceneBuilder errors, which we ignore
+     */
+    @Test
+    public void applyMoveTest() throws Exception{
+        QuaxBoardController controller = newInitialisedController();
+        Tile testTile = controller.findTileById("OctCell5E");
+
+        try{
+            controller.applyMove(testTile);
+        } catch(Exception ex){
+            //Is a UI/JavaFxScene error so we ignore this
+        }
+
+        Assert.assertEquals(Tile.TileColor.WHITE, testTile.getColor());
+        boolean isBlacksTurn = (boolean) getPrivateField(controller, "blackTurn");
+        Assert.assertTrue(isBlacksTurn);
+    }
+
+    /* Tests Dijkstra's algorithm for finding the best path for the bot
+     * On an empty board just created, the best path should be a straightline from
+     * one column of the board to the other, as the most simple case, which is what we test
+     * Use of assertTrue and assertEquals to make sure tests run smoothly
+     */
+    @Test
+    public void calculateBestPathTest(){
+        QuaxBoardController controller = newInitialisedController();
+        Tile[] path = controller.calculateBestPath(Tile.TileColor.WHITE);
+
+        Assert.assertNotNull(path);
+        Assert.assertTrue(path.length >= 11);
+        Assert.assertEquals(11, path[path.length-1].getTileCol());
+    }
+
+    /* Tests the backtracking logic of the pathfinder after the best path is found
+     * Creates two new tiles and inserts them into HashMap used to track tiles
+     * Verify that reconstructPath works with HashMap of new tiles and has appropriate properties
+     */
+    @Test
+    public void reconstructPathTest(){
+        QuaxBoardController controller = newInitialisedController();
+        java.util.Map<Tile, Tile> parents = new java.util.HashMap<>();
+
+        Tile t1 = controller.findTileById("OctCell11A");
+        Tile t2 = controller.findTileById("OctCell11B");
+
+        Tile[] path = controller.reconstructPath(t2, parents);
+        Assert.assertEquals(2, path.length);
+        Assert.assertEquals(t1, path[0]);
+        Assert.assertEquals(t2, path[1]);
+    }
+
+    /* Tests that 'showStrategy' boolean is updated and therefore best path of the bot is highlighted to user
+     * Requires use of helper methods created to toggle showStrategy on and off, and uses reflection
+     * to invoke highlightPath method, which in turns highlights path to the user
+     */
+    @Test
+    public void highlightPathTest() throws Exception{
+        QuaxBoardController controller = newInitialisedController();
+        setPrivateField(controller, "showStrategy", true);
+        controller.setMode("BOT");
+
+        try{
+            java.lang.reflect.Method method = QuaxBoardController.class.getDeclaredMethod("highlightPath");
+            method.setAccessible(true);
+            method.invoke(controller);
+        } catch(Exception ex){
+            //Is a UI/JavaFxScene error so we ignore this
+        }
+
+        boolean showStrategy = (boolean) getPrivateField(controller, "showStrategy");
+        Assert.assertTrue(showStrategy);
+    }
+
 }

@@ -326,7 +326,7 @@ public class QuaxBoardController {
     }
 
     //BEGINNING OF BOT METHODS//
-    private Tile botMove() {
+    protected Tile botMove() {
         Tile[] path = calculateBestPath(Tile.TileColor.WHITE);
         if (path != null) {
             for (Tile t : path) {
@@ -339,7 +339,7 @@ public class QuaxBoardController {
         return null;
     }
 
-    private void applyMove(Tile tile) {
+    protected void applyMove(Tile tile) {
         tile.setColor(Tile.TileColor.WHITE);
         Shape shape = (Shape) turnOctagon.getScene().lookup("#" + tile.getId());
         if (shape != null) {
