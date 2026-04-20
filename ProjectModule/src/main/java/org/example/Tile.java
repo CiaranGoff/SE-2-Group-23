@@ -9,7 +9,7 @@ public class Tile {
         OCTAGON, RHOMBUS
     }
     public enum TileColor{
-        EMPTY, BLACK, WHITE
+        EMPTY, BLACK, WHITE, LIGHTBLUE
     }
 
     private String id;
