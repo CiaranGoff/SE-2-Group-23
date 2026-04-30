@@ -18,9 +18,9 @@ public class QuaxBoardController {
     private Tile blackFirstMove = null;
     private boolean pieRuleAvailable = true;
     //2d arrays used to represent the tiles on the quax board//
-    private Tile[][] octagons = new Tile[11][11];
-    private Tile[][] rhombuses = new Tile[10][10];
-    private boolean showStrategy = false;
+    private final Tile[][] octagons = new Tile[11][11];
+    private final Tile[][] rhombuses = new Tile[10][10];
+    private final boolean showStrategy = false;
     @FXML
     private Shape turnOctagon;
 
@@ -158,16 +158,9 @@ public class QuaxBoardController {
     @FXML
     private void getCellID(MouseEvent event) {
 
-        clearHighlights();
-
-        if (showStrategy) {
-            highlightPath();
-        }
-
-        if (!(event.getSource() instanceof Shape)) {
+        if (!(event.getSource() instanceof Shape cell)) {
             return;
         }
-        Shape cell = (Shape) event.getSource();
 
         if ((cell.getFill().equals(Color.BLACK) || cell.getFill().equals(Color.WHITE)) && (!pieRuleAvailable || this.mode.equals("BOT"))) {
             return;
@@ -183,6 +176,12 @@ public class QuaxBoardController {
         Tile.TileColor currentColor = blackTurn ? Tile.TileColor.BLACK : Tile.TileColor.WHITE;
         cell.setFill(blackTurn ? Color.BLACK : Color.WHITE);
         tile.setColor(currentColor);
+
+        if (currentColor == Tile.TileColor.BLACK) {
+            lastBlackPlaced = tile;
+        } else {
+            lastWhitePlaced = tile;
+        }
 
         if (blackTurn && blackFirstMove == null) {
             blackFirstMove = tile;
@@ -201,7 +200,6 @@ public class QuaxBoardController {
         }
 
         if (this.mode.equals("BOT") && !blackTurn) {
-            highlightPath();
             botMove();
         }
     }
@@ -312,7 +310,7 @@ public class QuaxBoardController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText("Game Over");
-        alert.setContentText(message + "has won. Do you want to restart or exit");
+        alert.setContentText(message + " has won. Do you want to restart or exit");
 
         ButtonType restart = new ButtonType("Restart");
         ButtonType exit = new ButtonType("Exit");
@@ -327,20 +325,63 @@ public class QuaxBoardController {
 
     //BEGINNING OF BOT METHODS//
     protected Tile botMove() {
+        //make the bots first move//
+        if(lastWhitePlaced == null){
+            return botFirstMove();
+
+        }
+
+        //check if BLACK has placed a tile on one of our guaranteeConnection pairings//
+       Tile linkingTile = null;
+        Tile triggerTile = null;
+        for(java.util.Map.Entry<Tile, Tile> entry : guaranteeConnection.entrySet()){
+            if(entry.getKey().getColor() == Tile.TileColor.BLACK && isColorEmpty(entry.getValue())){
+                linkingTile = entry.getValue();
+                triggerTile = entry.getKey();
+                break;
+            }
+        }
+
+        if(linkingTile != null){
+            guaranteeConnection.remove(triggerTile);
+            guaranteeConnection.remove(linkingTile);
+            applyMove(linkingTile);
+            return linkingTile;
+        }
+
+        Tile tile = secureConnection();
+        //check to see if we have a guaranteeConnection tile placement//
+        if (tile != null) {
+            applyMove(tile);
+            return tile;
+        }
+
+        Tile blocker = handleVerticalBlack();
+        if (blocker != null) {
+            applyMove(blocker);
+            return blocker;
+        }
+
+        //use dijkstras algorithm to calculate best path//
         Tile[] path = calculateBestPath(Tile.TileColor.WHITE);
         if (path != null) {
             for (Tile t : path) {
-                if (t.getColor() == Tile.TileColor.EMPTY) {
+                if (isColorEmpty(t) && !guaranteeConnection.containsKey(t)) {
                     applyMove(t);
                     return t;
                 }
             }
         }
-        return null;
+
+        Tile fallBackTile = fallBackMove();
+        applyMove(fallBackTile);
+        return fallBackTile;
     }
 
     protected void applyMove(Tile tile) {
         tile.setColor(Tile.TileColor.WHITE);
+        lastWhitePlaced = tile;
+
         Shape shape = (Shape) turnOctagon.getScene().lookup("#" + tile.getId());
         if (shape != null) {
             shape.setFill(Color.WHITE);
@@ -355,7 +396,7 @@ public class QuaxBoardController {
     }
 
     //calculating best path using dijkstras algorithm//
-    protected Tile[] calculateBestPath(Tile.TileColor color){
+    protected Tile[] calculateBestPath(Tile.TileColor color) {
         //can be used to calculate HUMAN moves in order to block their path//
         Tile.TileColor opp = (color == Tile.TileColor.WHITE) ? Tile.TileColor.BLACK : Tile.TileColor.WHITE;
         //used to store the next best available tile//
@@ -365,31 +406,41 @@ public class QuaxBoardController {
         //contains the distance and the correspond tile//
         java.util.Map<Tile, Integer> dist = new java.util.HashMap<>();
 
-        for(int row = 0; row < 11; row++){
+        for (int row = 0; row < 11; row++) {
             Tile start = octagons[row][0];
-            if(start.getColor() != Tile.TileColor.BLACK){
+            if (start.getColor() != Tile.TileColor.BLACK) {
                 int firstCost = (start.getColor() == color) ? 0 : 1;
                 dist.put(start, firstCost);
                 pq.add(new PathNode(start, firstCost));
             }
         }
 
-        while(!pq.isEmpty()){
+        while (!pq.isEmpty()) {
             PathNode curr = pq.poll();
             Tile tile = curr.tile;
 
-            if(tile.getTileCol() == 11 && tile.getType() == Tile.TileType.OCTAGON){
+            if (tile.getTileCol() == 11 && tile.getType() == Tile.TileType.OCTAGON) {
                 return reconstructPath(tile, parents);
             }
 
-            for(Tile t : tile.getNeighbours()){
-                if(t.getColor() == opp){
+            for (Tile t : tile.getNeighbours()) {
+                if (t.getColor() == opp) {
                     continue;
                 }
                 int weight = (t.getColor() == color) ? 0 : 1;
+
+                //rhombuses have a higher weight as they have less neighbours//
+                if(isColorEmpty(t) && t.getType() == Tile.TileType.RHOMBUS){
+                    weight = 3;
+                }
+                //this check avoids backtracking with our guaranteeConnection method//
+                if(isColorEmpty(t) && guaranteeConnection.containsKey(t)) {
+                    weight = 0;
+                }
+
                 int distance = dist.get(tile) + weight;
 
-                if(distance < dist.getOrDefault(t, 999)){
+                if (distance < dist.getOrDefault(t, 999)) {
                     dist.put(t, distance);
                     parents.put(t, tile);
                     pq.add(new PathNode(t, distance));
@@ -399,83 +450,238 @@ public class QuaxBoardController {
         return null;
     }
 
-    protected Tile[] reconstructPath(Tile endTile, java.util.Map<Tile, Tile> parents){
+    protected Tile[] reconstructPath(Tile endTile, java.util.Map<Tile, Tile> parents) {
         java.util.List<Tile> path = new java.util.LinkedList<>();
         Tile curr = endTile;
 
-        while(curr != null){
+        while (curr != null) {
             path.add(0, curr);
             curr = parents.get(curr);
         }
         return path.toArray(new Tile[0]);
     }
 
-    @FXML
-    private ToggleButton strategyToggle;
+    private Tile lastWhitePlaced = null;
+    private Tile lastBlackPlaced = null;
 
-    @FXML
-    private void handleShowStrategyToggle() {
-        showStrategy = strategyToggle.isSelected();
+    private java.util.Map<Tile, Tile> guaranteeConnection = new java.util.HashMap<>();
 
-        if (!showStrategy) {
-            clearHighlights();
-            strategyToggle.setText("Show Strategy");
+    protected Tile secureConnection() {
+        if(lastBlackPlaced == null || lastBlackPlaced.getType() != Tile.TileType.OCTAGON){
+            return null;
+        }
+
+        Tile cutOffWhite = null;
+        int blackRow = lastBlackPlaced.getTileRow() - 1;
+        int blackCol = lastBlackPlaced.getTileCol() - 1;
+
+        //check to see if the tile is placed directly left/right of bots tile//
+       if(blackCol >= 0 && octagons[blackRow][blackCol - 1].getColor() == Tile.TileColor.WHITE){
+           cutOffWhite = octagons[blackRow][blackCol - 1];
+       }else if(blackCol <= 10 && octagons[blackRow][blackCol + 1].getColor() == Tile.TileColor.WHITE){
+           cutOffWhite = octagons[blackRow][blackCol + 1];
+       }
+
+       if(cutOffWhite == null){
+           return null;
+       }
+
+       int whiteRow = cutOffWhite.getTileRow() - 1;
+       int whiteCol = cutOffWhite.getTileCol() - 1;
+
+        boolean aboveValid = false;
+        Tile aboveOct1 = null;
+        Tile aboveOct2 = null;
+        Tile aboveRho = null;
+
+        //checking the above scenario//
+        if (whiteRow - 1 >= 0) {
+            int currentRow = whiteRow - 1;
+            aboveOct1 = octagons[currentRow][blackCol]; //octagon above white//
+            aboveOct2 = octagons[currentRow][whiteCol]; //octagon above black//
+            aboveRho = rhombuses[currentRow][Math.min(whiteCol, blackCol)]; //rhombus connecting//
+
+            if (isColorEmpty(aboveOct1) && isColorEmpty(aboveOct2) && isColorEmpty(aboveRho)
+                    && !guaranteeConnection.containsKey(aboveOct2)
+                    && !guaranteeConnection.containsKey(aboveRho)
+                    && !guaranteeConnection.containsKey(aboveOct1)) {
+                aboveValid = true;
+            }
+        }
+
+        boolean belowValid = false;
+        Tile belowOct1 = null;
+        Tile belowOct2 = null;
+        Tile belowRho = null;
+
+        if (whiteRow + 1 <= 10) {
+            int currentRow = whiteRow + 1;
+            belowOct1 = octagons[currentRow][blackCol];
+            belowOct2 = octagons[currentRow][whiteCol];
+            belowRho = rhombuses[currentRow][Math.min(whiteCol, blackCol)];
+
+            if (isColorEmpty(belowOct1) && isColorEmpty(belowOct2) && isColorEmpty(belowRho)
+                    && !guaranteeConnection.containsKey(belowOct2)
+                    && !guaranteeConnection.containsKey(belowRho)
+                    && !guaranteeConnection.containsKey(belowOct1)){
+                belowValid = true;
+            }
+        }
+
+        //no connections available//
+        if (!aboveValid && !belowValid) {
+            return null;
+        }
+
+        //if both options free we will pick one furthest from the edge//
+        boolean chooseAbove = false;
+        if (aboveValid && belowValid) {
+            int aboveDist = Math.min(whiteRow - 1, 10 - (whiteRow - 1));
+            int belowDist = Math.min(whiteRow + 1, 10 - (whiteRow + 1));
+            chooseAbove = aboveDist >= belowDist;
+        } else if (aboveValid) {
+            //only one valid case//
+            chooseAbove = true;
+        }
+
+        if (chooseAbove) {
+            guaranteeConnection.put(aboveOct2, aboveRho);
+            guaranteeConnection.put(aboveRho, aboveOct2);
+            return aboveOct1;
         } else {
-            strategyToggle.setText("Hide Strategy");
-            highlightPath();
+            guaranteeConnection.put(belowOct2, belowRho);
+            guaranteeConnection.put(belowRho, belowOct2);
+            return belowOct1;
         }
+
     }
 
-    private void highlightPath() {
-        if (!showStrategy) {return;}
-        if (!"BOT".equalsIgnoreCase(mode)) {return;}
+    protected boolean isColorEmpty(Tile tile) {
+        return Tile.TileColor.EMPTY.equals(tile.getColor());
+    }
 
-        clearHighlights();
+    protected Tile placeReactiveTile() {
+        Tile reactiveTile = guaranteeConnection.get(lastBlackPlaced);
 
-        Tile[] nextMove = calculateBestPath(Tile.TileColor.WHITE);
+        guaranteeConnection.remove(lastBlackPlaced);
+        guaranteeConnection.remove(reactiveTile);
 
-        if (nextMove != null) {
-            for (Tile tile : nextMove) {
-                Shape shape = (Shape) turnOctagon.getScene().lookup("#" + tile.getId());
+        if (isColorEmpty(reactiveTile)) {
+            applyMove(reactiveTile);
+        }
+        return reactiveTile;
+    }
 
-                if (shape != null && !(shape.getFill() == Color.WHITE) && !(shape.getFill() == Color.BLACK)) {
-                    shape.setFill(Color.LIGHTBLUE);
-                }
+    protected Tile botFirstMove(){
+            Tile start = octagons[7][0];
+            if(!isColorEmpty(start)){
+                start = octagons[5][0];
             }
-        }
+            applyMove(start);
+            return start;
     }
 
-    private void clearHighlights() {
+    protected Tile handleVerticalBlack(){
+        if(lastBlackPlaced == null || lastBlackPlaced.getType() != Tile.TileType.OCTAGON){
+            return null;
+        }
 
-        // reset octagons
-        for (int r = 0; r < 11; r++) {
-            for (int c = 0; c < 11; c++) {
-                Tile t = octagons[r][c];
+        int blackRow = lastBlackPlaced.getTileRow() - 1;
+        int blackCol = lastBlackPlaced.getTileCol() - 1;
 
-                if (t.getColor() == Tile.TileColor.EMPTY) {
-                    Shape s = (Shape) turnOctagon.getScene().lookup("#" + t.getId());
-                    if (s != null) {
-                        s.setFill(Color.web("#e9c218"));
+        if(blackCol >= 8) {
+            int count = 1;
+
+            //count black tiles up//
+            int tempRow = blackRow - 1;
+            while (tempRow >= 0 && octagons[tempRow][blackCol].getColor() == Tile.TileColor.BLACK) {
+                count++;
+                tempRow--;
+            }
+
+            //count black tiles down//
+            tempRow = blackRow + 1;
+            while (tempRow <= 10 && octagons[tempRow][blackCol].getColor() == Tile.TileColor.BLACK) {
+                count++;
+                tempRow++;
+            }
+
+            //try block the bottom//
+            if (count >= 4) {
+                int bottomRow = blackRow;
+                while (bottomRow <= 10 && octagons[bottomRow][blackCol].getColor() == Tile.TileColor.BLACK) {
+                    bottomRow++;
+                }
+                if (bottomRow <= 10) {
+                    Tile blocker = octagons[bottomRow][blackCol];
+                    if (isColorEmpty(blocker) && !guaranteeConnection.containsKey(blocker)) {
+                        return blocker;
+                    }
+                }
+
+                //if we can block bottom, block top//
+                int topRow = blackRow;
+                while (topRow >= 0 && octagons[topRow][blackCol].getColor() == Tile.TileColor.BLACK) {
+                    topRow--;
+                }
+                if (topRow >= 0) {
+                    Tile blocker = octagons[topRow][blackCol];
+                    if (isColorEmpty(blocker) && !guaranteeConnection.containsKey(blocker)) {
+                        return blocker;
                     }
                 }
             }
         }
+        return null;
+    }
 
-        // reset rhombuses
-        for (int r = 0; r < 10; r++) {
-            for (int c = 0; c < 10; c++) {
-                Tile t = rhombuses[r][c];
+    protected Tile completeGuaranteeChain(){
+        Tile[] path = calculateBestPath(Tile.TileColor.WHITE);
+        if(path != null){
+            int emptyTiles = 0;
+            Tile first = null;
 
-                if (t.getColor() == Tile.TileColor.EMPTY) {
-                    Shape s = (Shape) turnOctagon.getScene().lookup("#" + t.getId());
-                    if (s != null) {
-                        s.setFill(Color.web("#eeae0b"));
+            for(Tile t : path){
+                if(isColorEmpty(t)){
+                    if(!guaranteeConnection.containsKey(t)){
+                        emptyTiles++;
+                    }else if(first == null){
+                        first = t;
                     }
                 }
             }
+
+            if(emptyTiles == 0 && first != null){
+                Tile pair = null;
+                for(java.util.Map.Entry<Tile, Tile> entry : guaranteeConnection.entrySet()){
+                    if(entry.getValue() == first){
+                        pair = entry.getKey();
+                        break;
+                    }
+                }
+                if(pair != null){
+                    guaranteeConnection.remove(pair);
+                    guaranteeConnection.remove(first);
+                    return first;
+                }
+            }
         }
+        return null;
+    }
+
+    protected Tile fallBackMove(){
+        for(int r = 0; r < 11; r++){
+            for(int c = 0; c < 11; c++){
+                Tile tile = octagons[r][c];
+                if(isColorEmpty(tile)){
+                    return tile;
+                }
+            }
+        }
+        return null;
     }
 }
+
 
 
 
