@@ -1,4 +1,5 @@
 package org.example;
+import javafx.animation.PauseTransition;
 import javafx.scene.paint.Color;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
@@ -6,6 +7,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ public class QuaxBoardController {
 
     private String mode;
     private boolean blackTurn = true;
+    private boolean botDelay = false;
     private Tile blackFirstMove = null;
     private boolean pieRuleAvailable = true;
     //2d arrays used to represent the tiles on the quax board//
@@ -157,8 +160,15 @@ public class QuaxBoardController {
 
     @FXML
     private void getCellID(MouseEvent event) {
+        if(botDelay) {
+            return;
+        }
 
         if (!(event.getSource() instanceof Shape cell)) {
+            return;
+        }
+
+        if(this.mode.equals("BOT") && !blackTurn) {
             return;
         }
 
@@ -200,7 +210,13 @@ public class QuaxBoardController {
         }
 
         if (this.mode.equals("BOT") && !blackTurn) {
-            botMove();
+            botDelay = true;
+            PauseTransition del = new PauseTransition(Duration.seconds(1));
+            del.setOnFinished(e -> {
+                botMove();
+                botDelay = false;
+            });
+            del.play();
         }
     }
 
@@ -280,6 +296,11 @@ public class QuaxBoardController {
         blackTurn = true;
         blackFirstMove = null;
         pieRuleAvailable = true;
+        botDelay = false;
+
+        lastBlackPlaced = null;
+        lastWhitePlaced = null;
+        guaranteeConnection.clear();
 
         //reset the colour of the octagons//
         for (int r = 0; r < 11; r++) {
@@ -341,14 +362,14 @@ public class QuaxBoardController {
             return executeBotMove(move);
         }
 
-        //if black is close to winning, block them//
-        move = checkBlockOpponent();
+        //set up a guaranteed connection//
+        move = secureConnection();
         if(move != null){
             return executeBotMove(move);
         }
 
-        //set up a guaranteed connection//
-        move = secureConnection();
+        //if black is close to winning, block them//
+        move = checkBlockOpponent();
         if(move != null){
             return executeBotMove(move);
         }
@@ -493,9 +514,9 @@ public class QuaxBoardController {
         int blackCol = lastBlackPlaced.getTileCol() - 1;
 
         //check to see if the tile is placed directly left/right of bots tile//
-       if(blackCol >= 0 && octagons[blackRow][blackCol - 1].getColor() == Tile.TileColor.WHITE){
+       if(blackCol > 0 && octagons[blackRow][blackCol - 1].getColor() == Tile.TileColor.WHITE){
            cutOffWhite = octagons[blackRow][blackCol - 1];
-       }else if(blackCol <= 10 && octagons[blackRow][blackCol + 1].getColor() == Tile.TileColor.WHITE){
+       }else if(blackCol < 10 && octagons[blackRow][blackCol + 1].getColor() == Tile.TileColor.WHITE){
            cutOffWhite = octagons[blackRow][blackCol + 1];
        }
 
@@ -531,11 +552,11 @@ public class QuaxBoardController {
         Tile belowOct2 = null;
         Tile belowRho = null;
 
-        if (whiteRow + 1 <= 10) {
+        if (whiteRow + 1 < 11) {
             int currentRow = whiteRow + 1;
             belowOct1 = octagons[currentRow][blackCol];
             belowOct2 = octagons[currentRow][whiteCol];
-            belowRho = rhombuses[currentRow][Math.min(whiteCol, blackCol)];
+            belowRho = rhombuses[whiteRow][Math.min(whiteCol, blackCol)];
 
             if (isEmpty(belowOct1) && isEmpty(belowOct2) && isEmpty(belowRho)
                     && !guaranteeConnection.containsKey(belowOct2)
@@ -587,6 +608,12 @@ public class QuaxBoardController {
                 linkTile = entry.getValue();
                 triggerTile = entry.getKey();
                 break;
+            }else if(lastBlackPlaced != null && entry.getKey().getTileRow() == lastBlackPlaced.getTileRow() && entry.getKey().getTileCol() == lastBlackPlaced.getTileCol()){
+                if(isEmpty(entry.getValue())){
+                    linkTile = entry.getValue();
+                    triggerTile = entry.getKey();
+                    break;
+                }
             }
         }
 
@@ -599,46 +626,11 @@ public class QuaxBoardController {
     }
 
     protected Tile botFirstMove(){
-        Tile start = octagons[7][0];
+        Tile start = octagons[6][0];
         if(!isEmpty(start)){
-            start = octagons[5][0];
+            start = octagons[4][0];
         }
-        applyMove(start);
         return start;
-    }
-
-    protected Tile completeGuaranteeChain(){
-        Tile[] path = calculateBestPath(Tile.TileColor.WHITE);
-        if(path != null){
-            int emptyTiles = 0;
-            Tile first = null;
-
-            for(Tile t : path){
-                if(isEmpty(t)){
-                    if(!guaranteeConnection.containsKey(t)){
-                        emptyTiles++;
-                    }else if(first == null){
-                        first = t;
-                    }
-                }
-            }
-
-            if(emptyTiles == 0 && first != null){
-                Tile pair = null;
-                for(java.util.Map.Entry<Tile, Tile> entry : guaranteeConnection.entrySet()){
-                    if(entry.getValue() == first){
-                        pair = entry.getKey();
-                        break;
-                    }
-                }
-                if(pair != null){
-                    guaranteeConnection.remove(pair);
-                    guaranteeConnection.remove(first);
-                    return first;
-                }
-            }
-        }
-        return null;
     }
 
     protected Tile fallBackMove(){
@@ -774,7 +766,7 @@ public class QuaxBoardController {
         for(int i = 0; i < path.length; i++){
             Tile candidate = path[i];
 
-            if(!isEmpty(candidate) || !guaranteeConnection.containsKey(candidate)){
+            if(!isEmpty(candidate) || guaranteeConnection.containsKey(candidate)){
                 continue;
             }
 

@@ -610,17 +610,6 @@ public class QuaxBoardControllerTest {
         Assert.assertNull(result);
     }
 
-    /* Test to verify that completeGuaranteeChain returns null
-     * when there are no guaranteed connections currently built.
-     */
-    @Test
-    public void completeGuaranteeChainReturnsNullWhenEmptyTest(){
-        QuaxBoardController controller = newInitialisedController();
-        Tile result = controller.completeGuaranteeChain();
-
-        Assert.assertNull(result);
-    }
-
     /* Test to verify that advanceOwnPath successfully returns a valid,
      * empty tile for the bot to play when attempting to further its own win.
      */
