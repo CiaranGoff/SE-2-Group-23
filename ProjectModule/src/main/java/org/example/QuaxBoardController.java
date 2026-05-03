@@ -353,7 +353,7 @@ public class QuaxBoardController {
             return executeBotMove(move);
         }
 
-        move = buildGuranteeConnection();
+        move = buildGuaranteeConnection();
         if(move != null){
             return executeBotMove(move);
         }
@@ -574,12 +574,11 @@ public class QuaxBoardController {
         }
 
     }
-
     protected boolean isEmpty(Tile tile) {
         return Tile.TileColor.EMPTY.equals(tile.getColor());
     }
 
-  protected Tile claimGuaranteedConnection(){
+    protected Tile claimGuaranteedConnection(){
         Tile linkTile = null;
         Tile triggerTile = null;
 
@@ -597,15 +596,15 @@ public class QuaxBoardController {
           return linkTile;
       }
       return null;
-  }
+    }
 
     protected Tile botFirstMove(){
-            Tile start = octagons[7][0];
-            if(!isEmpty(start)){
-                start = octagons[5][0];
-            }
-            applyMove(start);
-            return start;
+        Tile start = octagons[7][0];
+        if(!isEmpty(start)){
+            start = octagons[5][0];
+        }
+        applyMove(start);
+        return start;
     }
 
     protected Tile completeGuaranteeChain(){
@@ -766,7 +765,7 @@ public class QuaxBoardController {
         return null;
     }
 
-    protected Tile buildGuranteeConnection(){
+    protected Tile buildGuaranteeConnection(){
         Tile[] path = calculateBestPath(Tile.TileColor.WHITE);
         if(path == null){
             return null;
@@ -807,7 +806,7 @@ public class QuaxBoardController {
         return null;
     }
 
-    private List<Tile> getAllTilesOfColor(Tile.TileColor color){
+    protected List<Tile> getAllTilesOfColor(Tile.TileColor color){
         List<Tile> tiles = new ArrayList<>();
 
         for(int r = 0; r < 11; r++){
@@ -828,11 +827,11 @@ public class QuaxBoardController {
         return tiles;
     }
 
-    private boolean isBlack(Tile tile){
+    protected boolean isBlack(Tile tile){
         return tile.getColor() == Tile.TileColor.BLACK;
     }
 
-    private boolean isWhite(Tile tile){
+    protected boolean isWhite(Tile tile){
         return tile.getColor() == Tile.TileColor.WHITE;
     }
 }

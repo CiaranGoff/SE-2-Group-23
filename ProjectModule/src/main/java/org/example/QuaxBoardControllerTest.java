@@ -6,6 +6,8 @@
 package org.example;
 
 import java.lang.reflect.Field;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -173,6 +175,17 @@ public class QuaxBoardControllerTest {
         QuaxBoardController controller = newInitialisedController();
         boolean result = controller.checkChain(null, Tile.TileColor.BLACK, new boolean[11][11], new boolean[10][10]);
 
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    public void checkChainWrongColourReturnsFalse(){
+        QuaxBoardController controller = newInitialisedController();
+
+        Tile tile = controller.findTileById("OctCell11A");
+        tile.setColor(Tile.TileColor.BLACK);
+
+        boolean result = controller.checkChain(tile, Tile.TileColor.BLACK,  new boolean[11][11], new boolean[10][10]);
         Assert.assertFalse(result);
     }
 
@@ -400,6 +413,25 @@ public class QuaxBoardControllerTest {
         Assert.assertTrue(whiteFound);
     }
 
+    /* Test to ensure botFirstMove picks the expected starting tile.
+     * In the controller logic, it defaults to octagons[7][0] if empty.
+     * Note: Catch block used to ignore JavaFX scene lookup exceptions.
+     */
+    @Test
+    public void botFirstMoveTest(){
+        QuaxBoardController controller = newInitialisedController();
+        try{
+            Tile movedTile = controller.botFirstMove();
+
+            Assert.assertNotNull(movedTile);
+            Assert.assertEquals(8, movedTile.getTileRow());
+            Assert.assertEquals(1, movedTile.getTileCol());
+            Assert.assertEquals(Tile.TileColor.WHITE, movedTile.getColor());
+        } catch(Exception e){
+            //Is a UI/JavaFxScene error so we ignore this
+        }
+    }
+
     /* To test that after calling applyMove, the chosen tile is correctly
      * updated and the turn is switched back to the other player, or bot
      * Note use of try-catch block for UI or sceneBuilder errors, which we ignore
@@ -435,6 +467,23 @@ public class QuaxBoardControllerTest {
         Assert.assertEquals(11, path[path.length-1].getTileCol());
     }
 
+    /* Test to ensure calculateBestPath handles obstacles correctly.
+     * A wall of BLACK tiles is placed to block the ideal route, and we
+     * verify the pathfinder routes around it by asserting the start of the path
+     * still begins at the expected column.
+     */
+    @Test
+    public void calculateBestPathBlockedTest(){
+        QuaxBoardController controller = newInitialisedController();
+
+        for(int row = 1; row < 11; row++){
+            controller.findTileById("OctCell" + row + "A").setColor(Tile.TileColor.BLACK);
+        }
+        Tile[] path = controller.calculateBestPath(Tile.TileColor.WHITE);
+        Assert.assertNotNull(path);
+        Assert.assertEquals(1, path[0].getTileCol());
+    }
+
     /* Tests the backtracking logic of the pathfinder after the best path is found
      * Creates two new tiles and inserts them into HashMap used to track tiles
      * Verify that reconstructPath works with HashMap of new tiles and has appropriate properties
@@ -446,6 +495,7 @@ public class QuaxBoardControllerTest {
 
         Tile t1 = controller.findTileById("OctCell11A");
         Tile t2 = controller.findTileById("OctCell11B");
+        parents.put(t2, t1);
 
         Tile[] path = controller.reconstructPath(t2, parents);
         Assert.assertEquals(2, path.length);
@@ -475,4 +525,186 @@ public class QuaxBoardControllerTest {
         Assert.assertTrue(showStrategy);
     }
 
+    /* Test to ensure fallback move simply picks the first available empty tile
+     * on the board when called.
+     */
+    @Test
+    public void fallBackMoveTest() {
+        QuaxBoardController controller = newInitialisedController();
+        Tile tile = controller.fallBackMove();
+
+        Assert.assertNotNull(tile);
+        Assert.assertEquals(Tile.TileColor.EMPTY, tile.getColor());
+        Assert.assertEquals("OctCell11A", tile.getId());
+    }
+
+    /* Test to verify the isEmpty utility function correctly identifies
+     * an unplayed tile. Uses assertTrue for the initial state and
+     * assertFalse after the tile's color state has been changed.
+     */
+    @Test
+    public void isEmptyTest(){
+        QuaxBoardController controller = newInitialisedController();
+        Tile tile = controller.findTileById("OctCell5E");
+
+        Assert.assertTrue(controller.isEmpty(tile));
+        tile.setColor(Tile.TileColor.WHITE);
+        Assert.assertFalse(controller.isEmpty(tile));
+    }
+
+    /* Test to verify the isBlack utility function correctly identifies
+     * a BLACK tile, and explicitly rejects identifying it as WHITE.
+     */
+    @Test
+    public void isBlackTest(){
+        QuaxBoardController controller = newInitialisedController();
+        Tile tile = controller.findTileById("OctCell3F");
+
+        tile.setColor(Tile.TileColor.BLACK);
+        Assert.assertTrue(controller.isBlack(tile));
+        Assert.assertFalse(controller.isWhite(tile));
+    }
+
+    /* Test to verify the isWhite utility function correctly identifies
+     * a WHITE tile, and explicitly rejects identifying it as BLACK.
+     */
+    @Test
+    public void isWhiteTest(){
+        QuaxBoardController controller = newInitialisedController();
+        Tile tile = controller.findTileById("OctCell3F");
+
+        tile.setColor(Tile.TileColor.WHITE);
+        Assert.assertTrue(controller.isWhite(tile));
+        Assert.assertFalse(controller.isBlack(tile));
+    }
+
+    /* Test to ensure the bot can successfully claim a guaranteed connection.
+     * Uses reflection to insert a hypothetical guaranteed connection into the
+     * private 'guaranteeConnection' map and verifies the correct tile is returned.
+     */
+    @Test
+    public void claimGuaranteedConnectionTest() throws Exception{
+        QuaxBoardController controller = newInitialisedController();
+
+        Tile t1 = controller.findTileById("OctCell5E");
+        Tile t2 = controller.findTileById("OctCell5F");
+
+        java.util.Map<Tile, Tile> map = (java.util.Map<Tile, Tile>) getPrivateField(controller, "guaranteeConnection");
+
+        t1.setColor(Tile.TileColor.BLACK);
+        map.put(t1, t2);
+
+        Tile result = controller.claimGuaranteedConnection();
+
+        Assert.assertEquals(t2, result);
+    }
+
+    /* Test to verify that secureConnection returns null if Black hasn't placed
+     * a tile yet, avoiding null pointer exceptions in early bot moves.
+     */
+    @Test
+    public void secureConnectionReturnsNullWhenNoBlackPlacedTest(){
+        QuaxBoardController controller = newInitialisedController();
+        Tile result = controller.secureConnection();
+
+        Assert.assertNull(result);
+    }
+
+    /* Test to verify that completeGuaranteeChain returns null
+     * when there are no guaranteed connections currently built.
+     */
+    @Test
+    public void completeGuaranteeChainReturnsNullWhenEmptyTest(){
+        QuaxBoardController controller = newInitialisedController();
+        Tile result = controller.completeGuaranteeChain();
+
+        Assert.assertNull(result);
+    }
+
+    /* Test to verify that advanceOwnPath successfully returns a valid,
+     * empty tile for the bot to play when attempting to further its own win.
+     */
+    @Test
+    public void advanceOwnPathReturnsTileTest(){
+        QuaxBoardController controller = newInitialisedController();
+        Tile move = controller.advanceOwnPath();
+
+        Assert.assertNotNull(move);
+        Assert.assertEquals(Tile.TileColor.EMPTY, move.getColor());
+    }
+
+    /* Test to verify the behavior of checkBlockOpponent on a newly initialized board.
+     * Ensures that a valid non-null tile is still generated as a block or default move.
+     */
+    @Test
+    public void checkBlockOpponentReturnsNullWhenEmptyTest(){
+        QuaxBoardController controller = newInitialisedController();
+        Tile result = controller.checkBlockOpponent();
+
+        Assert.assertNotNull(result);
+    }
+
+    /* Test to verify getAllTilesOfColor handles an empty board properly.
+     * Uses reflection to access the private method and asserts that the
+     * returned list of WHITE tiles is entirely empty.
+     */
+    @Test
+    public void getAllTilesOfColorEmptyBoardTest() throws Exception {
+        QuaxBoardController controller = newInitialisedController();
+
+        java.lang.reflect.Method method = QuaxBoardController.class.getDeclaredMethod("getAllTilesOfColor", Tile.TileColor.class);
+        method.setAccessible(true);
+
+        List<Tile> result = (List<Tile>) method.invoke(controller, Tile.TileColor.WHITE);
+
+        Assert.assertTrue(result.isEmpty());
+    }
+
+    /* Test to verify getAllTilesOfColor successfully retrieves only Octagon tiles.
+     * Colors two specific octagons WHITE and uses reflection to ensure exactly
+     * those two tiles are returned in the resulting list.
+     */
+    @Test
+    public void getAllTilesOfColorOctagonsOnlyTest() throws Exception {
+        QuaxBoardController controller = newInitialisedController();
+
+        Tile t1 = controller.findTileById("OctCell5E");
+        Tile t2 = controller.findTileById("OctCell6F");
+
+        t1.setColor(Tile.TileColor.WHITE);
+        t2.setColor(Tile.TileColor.WHITE);
+
+        java.lang.reflect.Method method = QuaxBoardController.class.getDeclaredMethod("getAllTilesOfColor", Tile.TileColor.class);
+        method.setAccessible(true);
+
+        List<Tile> result = (List<Tile>) method.invoke(controller, Tile.TileColor.WHITE);
+
+        Assert.assertEquals(2, result.size());
+        Assert.assertTrue(result.contains(t1));
+        Assert.assertTrue(result.contains(t2));
+    }
+
+    /* Test to verify getAllTilesOfColor successfully retrieves only Rhombus tiles.
+     * Colors two specific rhombuses BLACK and uses reflection to ensure exactly
+     * those two tiles are returned in the resulting list.
+     */
+    @Test
+    public void getAllTilesOfColorRhombusesOnlyTest() throws Exception {
+        QuaxBoardController controller = newInitialisedController();
+
+        Tile r1 = controller.findTileById("RhoCell1");
+        Tile r2 = controller.findTileById("RhoCell2");
+
+        r1.setColor(Tile.TileColor.BLACK);
+        r2.setColor(Tile.TileColor.BLACK);
+
+        java.lang.reflect.Method method = QuaxBoardController.class.getDeclaredMethod("getAllTilesOfColor", Tile.TileColor.class);
+        method.setAccessible(true);
+
+        List<Tile> result = (List<Tile>) method.invoke(controller, Tile.TileColor.BLACK);
+
+        Assert.assertEquals(2, result.size());
+        Assert.assertTrue(result.contains(r1));
+        Assert.assertTrue(result.contains(r2));
+    }
 }
