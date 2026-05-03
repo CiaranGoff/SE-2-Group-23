@@ -1,41 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.Double?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.GameModeController">
-   <children>
-      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1000.0" prefWidth="1500.0" style="-fx-background-color: A6462B;" VBox.vgrow="ALWAYS">
-         <children>
-            <Button fx:id="humanButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="834.0" layoutY="639.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHuman" prefHeight="76.0" prefWidth="525.0" style="-fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs HUMAN" textFill="#54ff57">
-               <font>
-                  <Font name="Baloo Chettan 2 Regular" size="30.0" />
-               </font>
-            </Button>
-            <Button fx:id="botMode" alignment="BASELINE_LEFT" layoutX="834.0" layoutY="749.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBot" prefHeight="76.0" prefWidth="525.0" style="-fx-background-color: #6b6161; -fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs BOT" textFill="#fc5353">
-               <font>
-                  <Font name="Baloo Chettan 2 Regular" size="30.0" />
-               </font>
-            </Button>
-            <Text fill="WHITE" layoutX="835.0" layoutY="611.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game Mode:" underline="true" wrappingWidth="242.187744140625">
-               <font>
-                  <Font name="Baloo Chettan 2 Regular" size="40.0" />
-               </font></Text>
-            <Label layoutX="824.0" layoutY="63.0" prefHeight="296.0" prefWidth="602.0" text="Quax" textFill="WHITE">
-               <font>
-                  <Font name="Baloo Chettan 2 Regular" size="180.0" />
-               </font>
-            </Label>
-            <Label layoutX="829.0" layoutY="280.0" prefHeight="267.0" prefWidth="552.0" text="11 x 11" textFill="WHITE">
-               <font>
-                  <Font name="Baloo Chettan 2 Regular" size="170.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
-   </children>
+    <children>
+        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="923.0" prefWidth="1521.0" style="-fx-background-color: A6462B;" VBox.vgrow="ALWAYS">
+            <children>
+                <Pane layoutX="349.0" layoutY="174.0" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: lightgray; -fx-border-color: orange; -fx-border-width: 10;" />
+                <Button fx:id="humanButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="526.0" layoutY="505.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHuman" prefHeight="76.0" prefWidth="446.0" style="-fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs HUMAN" textFill="#54ff57">
+                    <font>
+                        <Font name="Baloo Chettan 2 Regular" size="30.0" />
+                    </font>
+                </Button>
+                <Button fx:id="botMode" alignment="BASELINE_LEFT" layoutX="527.0" layoutY="605.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBot" prefHeight="76.0" prefWidth="446.0" style="-fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs BOT" textFill="#fc5353">
+                    <font>
+                        <Font name="Baloo Chettan 2 Regular" size="30.0" />
+                    </font>
+                </Button>
+                <Text layoutX="528.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game Mode:" underline="true" wrappingWidth="242.187744140625">
+                    <font>
+                        <Font name="Baloo Chettan 2 Regular" size="40.0" />
+                    </font></Text>
+                <Text layoutX="451.0" layoutY="374.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Quax 11 x 11" wrappingWidth="598.7003784179688">
+                    <font>
+                        <Font name="Baloo Chettan 2 Bold" size="120.0" />
+                    </font>
+                </Text>
+                <Polygon fx:id="OctCell8C" fill="WHITE" layoutX="47.0" layoutY="26.0" scaleX="1.2" scaleY="1.2" scaleZ="1.2" stroke="BLACK" strokeType="INSIDE">
+                    <points>
+                        <Double fx:value="75.1" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="75.1" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="75.1" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="75.1" />
+                    </points>
+                </Polygon>
+                <Polygon fx:id="OctCell8C2" fill="WHITE" layoutX="1242.0" layoutY="720.0" scaleX="1.2" scaleY="1.2" stroke="BLACK" strokeType="INSIDE">
+                    <points>
+                        <Double fx:value="75.1" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="75.1" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="75.1" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="75.1" />
+                    </points>
+                </Polygon>
+                <Polygon fx:id="OctCell8C3" layoutX="47.0" layoutY="720.0" scaleX="1.2" scaleY="1.2" stroke="BLACK" strokeType="INSIDE">
+                    <points>
+                        <Double fx:value="75.1" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="75.1" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="75.1" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="75.1" />
+                    </points>
+                </Polygon>
+                <Polygon fx:id="OctCell8C4" layoutX="1242.0" layoutY="27.0" scaleX="1.2" scaleY="1.2" stroke="BLACK" strokeType="INSIDE">
+                    <points>
+                        <Double fx:value="75.1" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="75.1" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="75.1" />
+                        <Double fx:value="160.0" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="124.9" />
+                        <Double fx:value="40.0" />
+                        <Double fx:value="75.1" />
+                    </points>
+                </Polygon>
+                <Pane layoutX="-1.0" layoutY="-31.0" prefHeight="987.0" prefWidth="36.0" style="-fx-background-color: white;" />
+                <Pane layoutX="1484.0" layoutY="-32.0" prefHeight="989.0" prefWidth="36.0" style="-fx-background-color: white;" />
+                <Pane layoutX="35.0" layoutY="920.0" prefHeight="36.0" prefWidth="1449.0" style="-fx-background-color: black;" />
+                <Pane layoutX="35.0" prefHeight="36.0" prefWidth="1449.0" style="-fx-background-color: black;" />
+            </children>
+        </AnchorPane>
+    </children>
 </VBox>
