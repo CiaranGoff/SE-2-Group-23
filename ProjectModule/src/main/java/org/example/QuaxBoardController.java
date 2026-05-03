@@ -206,11 +206,11 @@ public class QuaxBoardController {
 
     private void updateTurn() {
         if (blackTurn) {
-            turnLabel.setText("Black's Turn");
+            turnLabel.setText("BLACK'S TURN");
             turnOctagon.setFill(Color.BLACK);
             turnRhombus.setFill(Color.BLACK);
         } else {
-            turnLabel.setText("White's Turn");
+            turnLabel.setText("WHITE'S TURN");
             turnOctagon.setFill(Color.WHITE);
             turnRhombus.setFill(Color.WHITE);
         }
