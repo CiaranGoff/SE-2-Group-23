@@ -9,9 +9,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.GameModeController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: A6462B;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.GameModeController">
     <children>
-        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="923.0" prefWidth="1521.0" style="-fx-background-color: A6462B;" VBox.vgrow="ALWAYS">
+        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="923.0" prefWidth="1521.0" scaleX="0.8" scaleY="0.8" style="-fx-background-color: A6462B;" VBox.vgrow="ALWAYS">
             <children>
                 <Pane layoutX="349.0" layoutY="174.0" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: lightgray; -fx-border-color: orange; -fx-border-width: 10;" />
                 <Button fx:id="humanButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="526.0" layoutY="505.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHuman" prefHeight="76.0" prefWidth="446.0" style="-fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs HUMAN" textFill="#54ff57">
@@ -113,8 +113,8 @@
                         <Double fx:value="75.1" />
                     </points>
                 </Polygon>
-                <Pane layoutX="-1.0" layoutY="-31.0" prefHeight="987.0" prefWidth="36.0" style="-fx-background-color: white;" />
-                <Pane layoutX="1484.0" layoutY="-32.0" prefHeight="989.0" prefWidth="36.0" style="-fx-background-color: white;" />
+                <Pane layoutX="-1.0" layoutY="-1.0" prefHeight="957.0" prefWidth="36.0" style="-fx-background-color: white;" />
+                <Pane layoutX="1484.0" prefHeight="957.0" prefWidth="36.0" style="-fx-background-color: white;" />
                 <Pane layoutX="35.0" layoutY="920.0" prefHeight="36.0" prefWidth="1449.0" style="-fx-background-color: black;" />
                 <Pane layoutX="35.0" prefHeight="36.0" prefWidth="1449.0" style="-fx-background-color: black;" />
             </children>
