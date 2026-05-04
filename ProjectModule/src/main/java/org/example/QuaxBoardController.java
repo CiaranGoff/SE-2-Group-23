@@ -412,7 +412,7 @@ public class QuaxBoardController {
         }
 
         if (checkWin(Tile.TileColor.WHITE)) {
-            showWinnerAlert("White , Bot");
+            javafx.application.Platform.runLater(() -> showWinnerAlert("White , Bot"));
         } else {
             blackTurn = true;
             updateTurn();
