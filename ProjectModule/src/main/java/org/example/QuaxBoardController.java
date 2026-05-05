@@ -18,12 +18,14 @@ public class QuaxBoardController {
     private String mode;
     private boolean blackTurn = true;
     private boolean botDelay = false;
-    private Tile blackFirstMove = null;
     private boolean pieRuleAvailable = true;
-    //2d arrays used to represent the tiles on the quax board//
+    private Tile blackFirstMove = null;
+    private Tile lastWhitePlaced = null;
+    private Tile lastBlackPlaced = null;
     private final Tile[][] octagons = new Tile[11][11];
     private final Tile[][] rhombuses = new Tile[10][10];
-    private final boolean showStrategy = false;
+    private java.util.Map<Tile, Tile> guaranteeConnection = new java.util.HashMap<>();
+
     @FXML
     private Shape turnOctagon;
 
@@ -40,6 +42,18 @@ public class QuaxBoardController {
 
     public String getMode() {
         return mode;
+    }
+
+    protected boolean isBlack(Tile tile){
+        return tile.getColor() == Tile.TileColor.BLACK;
+    }
+
+    protected boolean isWhite(Tile tile){
+        return tile.getColor() == Tile.TileColor.WHITE;
+    }
+
+    protected boolean isEmpty(Tile tile) {
+        return Tile.TileColor.EMPTY.equals(tile.getColor());
     }
 
     @FXML
@@ -236,6 +250,7 @@ public class QuaxBoardController {
         boolean hasStart = false;
         boolean hasEnd = false;
 
+        //check to see if a player has a tile placed on both winning sides//
         if (color == Tile.TileColor.BLACK) {
             for (int i = 0; i < 11; i++) {
                 if (octagons[0][i].getColor() == color) hasStart = true;
@@ -248,6 +263,7 @@ public class QuaxBoardController {
             }
         }
 
+        //if a player dosent have a tile on both sides, cant win, return//
         if (!hasStart || !hasEnd) return false;
 
         boolean[][] visitedOct = new boolean[11][11];
@@ -255,12 +271,14 @@ public class QuaxBoardController {
 
         if (color == Tile.TileColor.BLACK) {
             for (int c = 0; c < 11; c++) {
+                //check all black octagons for a chain in the first row//
                 if (octagons[0][c].getColor() == color) {
                     if (checkChain(octagons[0][c], color, visitedOct, visitedRho)) return true;
                 }
             }
         } else {
             for (int r = 0; r < 11; r++) {
+                //check all white octagons for a chain in the first column//
                 if (octagons[r][0].getColor() == color) {
                     if (checkChain(octagons[r][0], color, visitedOct, visitedRho)) return true;
                 }
@@ -278,6 +296,7 @@ public class QuaxBoardController {
         if (tile.getType() == Tile.TileType.OCTAGON) {
             if (visitedOct[row][col]) return false;
             visitedOct[row][col] = true;
+            //checks to see if we have reached opposite edges//
             if (color == Tile.TileColor.BLACK && tile.getTileRow() == 11) return true;
             if (color == Tile.TileColor.WHITE && tile.getTileCol() == 11) return true;
         } else {
@@ -286,6 +305,7 @@ public class QuaxBoardController {
         }
 
         for (Tile neighbor : tile.getNeighbours()) {
+            //recursivley checks all neighbours//
             if (checkChain(neighbor, color, visitedOct, visitedRho)) return true;
         }
         return false;
@@ -344,7 +364,6 @@ public class QuaxBoardController {
         }
     }
 
-    //BEGINNING OF BOT METHODS//
     protected Tile botMove() {
         Tile move;
 
@@ -374,6 +393,7 @@ public class QuaxBoardController {
             return executeBotMove(move);
         }
 
+        //try and set up a connection we can guarantee a link//
         move = buildGuaranteeConnection();
         if(move != null){
             return executeBotMove(move);
@@ -385,6 +405,7 @@ public class QuaxBoardController {
             return executeBotMove(move);
         }
 
+        //if no moves available, choose random move//
         move = fallBackMove();
         if(move != null){
             return executeBotMove(move);
@@ -437,6 +458,7 @@ public class QuaxBoardController {
                 }
             }
         }else{
+            //deals with black north to south//
             for(int col = 0; col < 11; col++){
                 Tile start = octagons[0][col];
                 if(start.getColor() != opp){
@@ -499,11 +521,6 @@ public class QuaxBoardController {
         return path.toArray(new Tile[0]);
     }
 
-    private Tile lastWhitePlaced = null;
-    private Tile lastBlackPlaced = null;
-
-    private java.util.Map<Tile, Tile> guaranteeConnection = new java.util.HashMap<>();
-
     protected Tile secureConnection() {
         if(lastBlackPlaced == null || lastBlackPlaced.getType() != Tile.TileType.OCTAGON){
             return null;
@@ -554,9 +571,9 @@ public class QuaxBoardController {
 
         if (whiteRow + 1 < 11) {
             int currentRow = whiteRow + 1;
-            belowOct1 = octagons[currentRow][blackCol];
-            belowOct2 = octagons[currentRow][whiteCol];
-            belowRho = rhombuses[whiteRow][Math.min(whiteCol, blackCol)];
+            belowOct1 = octagons[currentRow][blackCol]; //octagon below white//
+            belowOct2 = octagons[currentRow][whiteCol]; //octagon below black//
+            belowRho = rhombuses[whiteRow][Math.min(whiteCol, blackCol)]; //connecting rhombus//
 
             if (isEmpty(belowOct1) && isEmpty(belowOct2) && isEmpty(belowRho)
                     && !guaranteeConnection.containsKey(belowOct2)
@@ -595,15 +612,13 @@ public class QuaxBoardController {
         }
 
     }
-    protected boolean isEmpty(Tile tile) {
-        return Tile.TileColor.EMPTY.equals(tile.getColor());
-    }
 
     protected Tile claimGuaranteedConnection(){
         Tile linkTile = null;
         Tile triggerTile = null;
 
         for(java.util.Map.Entry<Tile, Tile> entry : guaranteeConnection.entrySet()){
+            //if opponent has placed a tile on our Tile pairing within the map//
             if(isBlack(entry.getKey()) && isEmpty(entry.getValue())){
                 linkTile = entry.getValue();
                 triggerTile = entry.getKey();
@@ -626,13 +641,16 @@ public class QuaxBoardController {
     }
 
     protected Tile botFirstMove(){
+        //always place near middle//
         Tile start = octagons[6][0];
+        //backup option//
         if(!isEmpty(start)){
             start = octagons[4][0];
         }
         return start;
     }
 
+    //calculates a random move if all other strategies fail//
     protected Tile fallBackMove(){
         for(int r = 0; r < 11; r++){
             for(int c = 0; c < 11; c++){
@@ -656,6 +674,7 @@ public class QuaxBoardController {
         Tile bestTile = null;
         int bestScore = -999;
         for(Tile t : blackPath){
+            //only check empty tiles on the path//
             if(!isEmpty(t) || guaranteeConnection.containsKey(t)){
                 continue;
             }
@@ -665,6 +684,7 @@ public class QuaxBoardController {
 
             boolean capLadder = false;
             for(Tile neighbour : t.getNeighbours()){
+                //if an empty tile has a BLACK neighbour, it has high priority to block//
                 if(neighbour != null && isBlack(neighbour)){
                     capLadder = true;
                     break;
@@ -676,9 +696,11 @@ public class QuaxBoardController {
                 score += 100;
             }
 
+            //ensures to cap the ladder on most effective side to us (central)//
             int rowCentrality = 5 - Math.abs(5 - row);
             score += (rowCentrality * 2);
 
+            //give preference to octagons as they have more neighbours//
             if(t.getType() == Tile.TileType.OCTAGON){
                 score += 10;
             }
@@ -711,6 +733,7 @@ public class QuaxBoardController {
         int whiteEmptyCount = 0;
         if(blackPath != null){
             for(Tile t : blackPath){
+                //count number of empty tiles in BLACKS optimal path//
                 if(isEmpty(t)){
                     blackEmptyCount++;
                 }
@@ -719,6 +742,7 @@ public class QuaxBoardController {
 
         if(whitePath != null){
             for(Tile t : whitePath){
+                //count number of empty tiles in WHITES optimal path//
                 if(isEmpty(t) && !guaranteeConnection.containsKey(t)){
                     whiteEmptyCount++;
                 }
@@ -728,7 +752,9 @@ public class QuaxBoardController {
             whiteEmptyCount = 99;
         }
 
+        //if black is closer to winning than white//
         if(blackEmptyCount <= whiteEmptyCount + 2){
+            //block opponent//
             return blockOpponentPath();
         }
         return null;
@@ -742,6 +768,7 @@ public class QuaxBoardController {
 
         //check for a free tile thats not in guaranteeConnection//
         for(Tile t : path){
+            //return next tile in our most optimal path//
             if(isEmpty(t) && !guaranteeConnection.containsKey(t)){
                 return t;
             }
@@ -766,10 +793,12 @@ public class QuaxBoardController {
         for(int i = 0; i < path.length; i++){
             Tile candidate = path[i];
 
+            //only check empty tiles//
             if(!isEmpty(candidate) || guaranteeConnection.containsKey(candidate)){
                 continue;
             }
 
+            //checks to see if current tile shares neighbours with any other white tiles//
             for(Tile currWhite : getAllTilesOfColor(Tile.TileColor.WHITE)){
                 int sharedNeighbours = 0;
                 Tile neighbour1 = null;
@@ -788,6 +817,7 @@ public class QuaxBoardController {
                     }
                 }
 
+                //if it shares a guaranteedConnection//
                 if(sharedNeighbours >= 2){
                     guaranteeConnection.put(neighbour1, neighbour2);
                     guaranteeConnection.put(neighbour2, neighbour1);
@@ -817,13 +847,5 @@ public class QuaxBoardController {
             }
         }
         return tiles;
-    }
-
-    protected boolean isBlack(Tile tile){
-        return tile.getColor() == Tile.TileColor.BLACK;
-    }
-
-    protected boolean isWhite(Tile tile){
-        return tile.getColor() == Tile.TileColor.WHITE;
     }
 }
