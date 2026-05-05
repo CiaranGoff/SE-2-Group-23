@@ -14,26 +14,23 @@
         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="923.0" prefWidth="1521.0" scaleX="0.8" scaleY="0.8" style="-fx-background-color: A6462B;" VBox.vgrow="ALWAYS">
             <children>
                 <Pane layoutX="349.0" layoutY="174.0" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: lightgray; -fx-border-color: orange; -fx-border-width: 10;" />
+
                 <!-- REMOVED : onAction="#handleHuman" -->
+                <!--Button to select the human game mode, however it is disabled for final submission-->
                 <Button fx:id="humanButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="526.0" layoutY="505.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.68" prefHeight="76.0" prefWidth="446.0" style="-fx-border-color: #bfbbbb; -fx-background-color: #757272" text="vs HUMAN" textFill="#54ff57">
-                    <font>
-                        <Font name="Baloo Chettan 2 Regular" size="30.0" />
-                    </font>
-                </Button>
+                    <font><Font name="Baloo Chettan 2 Regular" size="30.0" /></font></Button>
+
+                <!--Button to select the vs BOT game mode, quax_board.fxml is set as new stage-->
                 <Button fx:id="botMode" alignment="BASELINE_LEFT" layoutX="527.0" layoutY="605.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleBot" prefHeight="76.0" prefWidth="446.0" style="-fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs BOT" textFill="#fc5353">
-                    <font>
-                        <Font name="Baloo Chettan 2 Regular" size="30.0" />
-                    </font>
-                </Button>
+                    <font><Font name="Baloo Chettan 2 Regular" size="30.0" /></font></Button>
+
+                <!--Text on screen-->
                 <Text layoutX="528.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game Mode:" underline="true" wrappingWidth="242.187744140625">
-                    <font>
-                        <Font name="Baloo Chettan 2 Regular" size="40.0" />
-                    </font></Text>
+                    <font><Font name="Baloo Chettan 2 Regular" size="40.0" /></font></Text>
                 <Text layoutX="451.0" layoutY="374.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Quax 11 x 11" wrappingWidth="598.7003784179688">
-                    <font>
-                        <Font name="Baloo Chettan 2 Bold" size="120.0" />
-                    </font>
-                </Text>
+                    <font><Font name="Baloo Chettan 2 Bold" size="120.0" /></font></Text>
+
+                <!--Showing the polygons purely for the visuals-->
                 <Polygon fx:id="OctCell8C" fill="WHITE" layoutX="47.0" layoutY="26.0" scaleX="1.2" scaleY="1.2" scaleZ="1.2" stroke="BLACK" strokeType="INSIDE">
                     <points>
                         <Double fx:value="75.1" />
@@ -114,6 +111,8 @@
                         <Double fx:value="75.1" />
                     </points>
                 </Polygon>
+
+                <!--Colours for background-->
                 <Pane layoutX="-1.0" layoutY="-1.0" prefHeight="957.0" prefWidth="36.0" style="-fx-background-color: white;" />
                 <Pane layoutX="1484.0" prefHeight="957.0" prefWidth="36.0" style="-fx-background-color: white;" />
                 <Pane layoutX="35.0" layoutY="920.0" prefHeight="36.0" prefWidth="1449.0" style="-fx-background-color: black;" />

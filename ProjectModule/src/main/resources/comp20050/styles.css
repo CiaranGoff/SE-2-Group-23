@@ -1,7 +1,17 @@
+
+/*
+Colour of buttons on Game Mode screen
+ */
 .hover-target {
     -fx-background-color:  #6b6161;
 }
 
+/*
+When hovering over buttons:
+    - change colour
+    - underline text
+    - cursor points
+*/
 .hover-target:hover {
     -fx-background-color: #757272;
     -fx-underline: true;

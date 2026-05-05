@@ -15,22 +15,27 @@
    <children>
       <AnchorPane fx:id="AnchorPane" layoutY="-400.0" minHeight="-Infinity" onMouseClicked="#getCellID" prefHeight="1320.0" prefWidth="1800.0" scaleX="0.55" scaleY="0.55" style="-fx-background-color: AB562B;">
          <children>
+
+             <!--Narrow grey boxes at top and bottom of the board for Columns-->
             <Pane layoutX="16.0" layoutY="52.0" prefHeight="47.0" prefWidth="1158.0" style="-fx-background-color: gainsboro; -fx-border-color: black; -fx-border-width: 2;" />
             <Pane layoutX="16.0" layoutY="1146.0" prefHeight="47.0" prefWidth="1158.0" style="-fx-background-color: gainsboro; -fx-border-color: black; -fx-border-width: 2;" />
+
+             <!--Grey box beside board-->
             <Pane layoutX="1197.0" layoutY="229.0" prefHeight="781.0" prefWidth="756.0" style="-fx-background-color: gainsboro; -fx-border-color: black; -fx-border-width: 10;">
-               <children>
+                <!--Text in the grey box-->
+                <children>
                   <Text fill="#0edd42" layoutX="117.0" layoutY="596.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLACE A HEXAGON / RHOMBIC CELL!" wrappingWidth="524.06591796875">
-                     <font>
-                        <Font name="Baloo Chettan 2 Bold" size="58.0" />
-                     </font>
-                  </Text>
+                     <font><Font name="Baloo Chettan 2 Bold" size="58.0" /></font></Text>
+
                   <Label fx:id="turnLabel" layoutX="23.0" layoutY="45.0" text="BLACK TO START" textAlignment="CENTER" underline="true">
-                     <font>
-                        <Font name="Baloo Chettan 2 Bold" size="96.0" />
-                     </font>
-                  </Label>
+                     <font><Font name="Baloo Chettan 2 Bold" size="96.0" /></font></Label>
                </children>
             </Pane>
+
+
+             <!--Board-->
+             <!--121 Hexagons, 100 Rhombic Cells-->
+             <!--Rectangles used for white background on board-->
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f4f4f1" height="1000.0" layoutX="64.0" layoutY="142.0" stroke="BLACK" strokeType="INSIDE" width="70.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f4f4f1" height="1000.0" layoutX="1054.0" layoutY="123.0" stroke="BLACK" strokeType="INSIDE" width="70.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#050b12" height="60.0" layoutX="64.0" layoutY="1088.0" stroke="BLACK" strokeType="INSIDE" width="1060.0" />
@@ -2843,7 +2848,11 @@
             <Polygon fx:id="RhoCell74" fill="#eeae0b" layoutX="359.0" layoutY="748.0" onMouseClicked="#getCellID" points="100.0, 64.9, 135.1, 100.0, 100.0, 135.1, 64.9, 100.0" scaleX="0.75" scaleY="0.75" stroke="BLACK" strokeType="INSIDE" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e49425" height="1050.0" layoutX="1124.0" layoutY="98.0" stroke="BLACK" strokeType="INSIDE" width="50.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e49425" height="1050.0" layoutX="14.0" layoutY="98.0" stroke="BLACK" strokeType="INSIDE" width="50.0" />
-            <Text layoutX="136.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A">
+
+
+
+             <!--Number, Letters for rows and columns-->
+             <Text layoutX="136.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A">
                <font>
                   <Font name="Arial Bold" size="24.0" />
                </font>
