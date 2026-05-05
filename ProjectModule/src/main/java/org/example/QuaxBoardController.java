@@ -827,12 +827,3 @@ public class QuaxBoardController {
         return tile.getColor() == Tile.TileColor.WHITE;
     }
 }
-
-
-
-
-
-
-
-
-

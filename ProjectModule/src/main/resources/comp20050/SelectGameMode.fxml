@@ -14,7 +14,8 @@
         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="923.0" prefWidth="1521.0" scaleX="0.8" scaleY="0.8" style="-fx-background-color: A6462B;" VBox.vgrow="ALWAYS">
             <children>
                 <Pane layoutX="349.0" layoutY="174.0" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: lightgray; -fx-border-color: orange; -fx-border-width: 10;" />
-                <Button fx:id="humanButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="526.0" layoutY="505.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHuman" prefHeight="76.0" prefWidth="446.0" style="-fx-border-color: #bfbbbb;" styleClass="hover-target" stylesheets="@styles.css" text="vs HUMAN" textFill="#54ff57">
+                <!-- REMOVED : onAction="#handleHuman" -->
+                <Button fx:id="humanButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="526.0" layoutY="505.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.68" prefHeight="76.0" prefWidth="446.0" style="-fx-border-color: #bfbbbb; -fx-background-color: #757272" text="vs HUMAN" textFill="#54ff57">
                     <font>
                         <Font name="Baloo Chettan 2 Regular" size="30.0" />
                     </font>
